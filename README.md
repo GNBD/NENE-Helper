@@ -1,7 +1,7 @@
 🚀 Project Overview
 NENE HELPER는 
 
-마인크래프트 자바 에디션 서버를 보다 빠르고 쉽게 구성하기 위해 만들어진 툴입니다.
+자바 에디션 서버를 보다 빠르고 쉽게 구성하기 위해 만들어진 툴 입니다.
 PaperMC API를 통해 최신 서버 코어를 자동으로 가져오며, UI는 HTML/CSS 기반으로 제작되었습니다.
 
 ✔️ 원클릭 PaperMC 서버 생성
@@ -46,3 +46,5 @@ Google Gemini AI — Design, Development
 
 
 ❤️ Created with love by JIN
+
+이 프로그램에 대하여 어떠한 문제라도 발생할 경우 삭제 하겠습니다.
