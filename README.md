@@ -38,6 +38,9 @@ Phosphor Icons — UI icons
 
 PaperMC API — Paper server core distribution
 
+
+
+
 👤 Developers
 JIN — Director, Design, Development
 Hwisel — Information Provision
@@ -47,4 +50,4 @@ Google Gemini AI — Design, Development
 
 ❤️ Created with love by JIN
 
-이 프로그램에 대하여 어떠한 문제라도 발생할 경우 삭제 하겠습니다.
+If any problems arise from this program, it will be taken down without hesitation.
