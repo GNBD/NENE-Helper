@@ -27,10 +27,15 @@ HTML / CSS / JavaScript — UI 제작
 
 📦 Libraries & Resources
 psutil — CPU/RAM 상태 모니터링
+
 requests — API 통신 및 다운로드
+
 Pretendard — 메인 UI 폰트 (by Orion Cactus)
+
 Phosphor Icons — UI 아이콘
+
 PaperMC API — Paper 서버 코어 다운로드
+
 Minotar API — 플레이어 스킨 렌더링
 
 👤 Developers
