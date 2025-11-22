@@ -15,6 +15,8 @@ It automatically fetches the latest server core through the PaperMC API, and its
 
 <img width="1122" height="720" alt="image" src="https://github.com/user-attachments/assets/b6c99677-64ca-49bc-aaf3-bb052e5a7d3e" />
 
+https://nenehelper.netlify.app/
+
 
 
 🛠️ Tech Stack
