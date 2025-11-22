@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NENE HELPER</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* 스타일 유지하되, 타이틀바 제거 및 body 여백 조정 */
+        :root {
+            --bg-body: #181818;
+            --bg-sidebar: #212121;
+            --bg-card: #2b2b2b;
+            --bg-console: #000000;
+            --accent-blue: #3ea6ff;
+            --accent-green: #2ba640;
+            --accent-red: #f44336;
+            --accent-purple: #e040fb;
+            /* 광고/공지용 색상 */
+            --melon: #00e676;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --border: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            outline: none;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Pretendard', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* 타이틀바 스타일 제거 */
+
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #2a2a2a;
+        }
+
+        .logo-area {
+            padding: 30px 20px;
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+        }
+
+        .server-list {
+            flex: 1;
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        .server-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: 0.2s;
+        }
+
+        .server-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .server-item.active {
+            background: #2a2a2a;
+            border-left-color: var(--accent-blue);
+        }
+
+        .server-item h4 {
+            margin: 0;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .server-item p {
+            margin: 0;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            color: #888;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-new {
+            flex: 1;
+            font-size: 13px;
+            font-weight: bold;
+            background: var(--accent-green);
+            color: #fff;
+            gap: 5px;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .empty-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-body);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+        }
+
+        .empty-screen i {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            display: none;
+        }
+
+        .main-content-wrapper.active {
+            display: flex;
+        }
+
+        .header {
+            height: 70px;
+            background: var(--bg-body);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .status-badge {
+            background: rgba(43, 166, 64, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .status-badge.offline {
+            background: rgba(244, 67, 54, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .status-badge.offline .dot {
+            background: var(--accent-red);
+        }
+
+        .tabs {
+            display: flex;
+            padding: 0 30px;
+            border-bottom: 1px solid #2a2a2a;
+            background: var(--bg-body);
+        }
+
+        .tab {
+            padding: 15px 5px;
+            margin-right: 25px;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .tab.danger {
+            color: var(--accent-red);
+        }
+
+        .tab.danger.active {
+            border-bottom-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* [추가] 광고 탭 스타일 */
+        .tab.broadcast.active {
+            color: var(--accent-purple);
+            border-bottom-color: var(--accent-purple);
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content.active {
+            display: flex;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 20px;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-label {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .console-box {
+            flex: 1;
+            background: var(--bg-console);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Consolas', monospace;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+
+        .logs {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-red {
+            background: var(--accent-red);
+        }
+
+        .btn-blue {
+            background: var(--accent-blue);
+        }
+
+        .btn-purple {
+            background: var(--accent-purple);
+        }
+
+        .env-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .env-btn {
+            background: var(--bg-card);
+            border: 1px solid #333;
+            color: #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .env-btn:hover {
+            background: #333;
+            border-color: var(--accent-blue);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .env-btn i {
+            font-size: 24px;
+            color: var(--accent-blue);
+        }
+
+        .setting-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .setting-row span {
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .input-text {
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            width: 200px;
+            text-align: right;
+        }
+
+        .input-text.full-width {
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .input-num {
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            width: 80px;
+            text-align: right;
+        }
+
+        .input-select {
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            width: 120px;
+            cursor: pointer;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--melon);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .player-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .player-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .player-card:hover {
+            border-color: var(--accent-blue);
+            background: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        .p-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: #444;
+            background-size: cover;
+        }
+
+        .btn-xs {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--accent-red);
+            background: transparent;
+            color: var(--accent-red);
+            transition: 0.2s;
+        }
+
+        .btn-xs:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            z-index: 10001;
+        }
+
+        .toast {
+            padding: 15px;
+            background: #333;
+            color: #fff;
+            border-left: 5px solid var(--accent-blue);
+            margin-bottom: 10px;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .toast.success {
+            border-color: var(--accent-green);
+        }
+
+        .toast.error {
+            border-color: var(--accent-red);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #252526;
+            width: 450px;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h3 {
+            margin-top: 0;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        .modal-label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .player-detail-modal {
+            width: 600px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .skin-view {
+            width: 200px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
+        }
+
+        .p-detail-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .p-stat-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .p-stat-label {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .p-stat-val {
+            font-weight: bold;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .act-btn {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #ccc;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .act-btn:hover {
+            background: #333;
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .act-btn.danger {
+            color: var(--accent-red);
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+
+        .act-btn.danger:hover {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .list-manager-modal {
+            width: 500px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-box {
+            flex: 1;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 6px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-btn-s {
+            padding: 4px 8px;
+            font-size: 11px;
+            background: #333;
+            border: 1px solid #444;
+            color: #aaa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .list-btn-s:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="toast-container"></div>
+    <aside class="sidebar">
+        <div class="logo-area" data-i18n="title_launcher">SERVER<br>LAUNCHER</div>
+        <div class="server-list" id="sidebarList"></div>
+        <div class="sidebar-footer">
+            <button class="btn-icon" onclick="openModal('launcherSettingsModal')"><i class="ph ph-gear"></i></button>
+            <button class="btn-icon btn-new" onclick="openModal('eulaModal')"><i class="ph ph-plus"></i> &nbsp;<span
+                    data-i18n="btn_new_server">새 서버</span></button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div id="emptyScreen" class="empty-screen">
+            <i class="ph ph-arrow-elbow-down-left"></i>
+            <h3 data-i18n="msg_select_server">서버를 선택하세요</h3>
+        </div>
+
+        <div id="mainContent" class="main-content-wrapper">
+            <div class="header">
+                <div class="header-left">
+                    <h2 id="headerTitle">Server Name</h2>
+                </div>
+                <div class="status-badge" id="statusBadge">
+                    <div class="dot"></div> <span id="statusText">READY</span>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('dashboard', this)" data-i18n="tab_dashboard">대시보드</div>
+                <div class="tab" onclick="switchTab('environment', this)" data-i18n="tab_env">월드 환경</div>
+                <div class="tab" onclick="switchTab('players', this)" data-i18n="tab_players">플레이어 관리</div>
+                <div class="tab broadcast" onclick="switchTab('broadcast', this)">📢 광고/공지</div>
+                <div class="tab" onclick="switchTab('settings', this)" data-i18n="tab_settings">전체 설정</div>
+                <div class="tab danger" onclick="switchTab('danger', this)" data-i18n="tab_danger">⛔ 위험 구간</div>
+            </div>
+
+            <div id="dashboard" class="content active">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-label">CPU</div>
+                        <div class="card-value" id="sysCpu">0%</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label">RAM</div>
+                        <div class="card-value" id="ramDisplay">2 GB</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" data-i18n="card_player">Player</div>
+                        <div class="card-value"><span id="playerCount">0</span></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" data-i18n="card_status">Status</div>
+                        <div class="card-value" id="statusSimple" style="font-size:20px;">Stopped</div>
+                    </div>
+                </div>
+                <div class="console-box">
+                    <div class="logs" id="logs"></div>
+                    <div style="display:flex; border-top:1px solid #333; padding-top:10px;">
+                        <span style="color:#2ba640; font-weight:bold; margin-right:10px;">></span>
+                        <input type="text" class="cmd-input" id="cmdInput" placeholder="명령어 입력..."
+                            data-i18n="ph_cmd_input">
+                    </div>
+                </div>
+                <div class="action-bar">
+                    <button class="btn btn-red hidden" id="btnStop" onclick="sendCommand('stop')"
+                        data-i18n="btn_stop">서버 종료</button>
+                    <button class="btn btn-blue" id="btnStart" onclick="startServer()" data-i18n="btn_start">서버
+                        시작</button>
+                </div>
+            </div>
+
+            <div id="environment" class="content">
+                <h3 style="color:var(--accent-blue)" data-i18n="title_time">⏰ 시간 제어</h3>
+                <div class="env-grid">
+                    <div class="env-btn" onclick="sendCommand('time set 0'); showToast('Time: Morning')"><i
+                            class="ph ph-sun-horizon"></i><span data-i18n="env_morning">아침</span></div>
+                    <div class="env-btn" onclick="sendCommand('time set 6000'); showToast('Time: Noon')"><i
+                            class="ph ph-sun"></i><span data-i18n="env_noon">점심</span></div>
+                    <div class="env-btn" onclick="sendCommand('time set 13000'); showToast('Time: Evening')"><i
+                            class="ph ph-moon-stars"></i><span data-i18n="env_evening">저녁</span></div>
+                    <div class="env-btn" onclick="sendCommand('time set 18000'); showToast('Time: Night')"><i
+                            class="ph ph-moon"></i><span data-i18n="env_night">밤</span></div>
+                </div>
+                <h3 style="color:var(--melon); margin-top:30px;" data-i18n="title_weather">🌥️ 날씨 제어</h3>
+                <div class="env-grid">
+                    <div class="env-btn" onclick="sendCommand('weather clear'); showToast('Weather: Clear')"><i
+                            class="ph ph-sun"></i><span data-i18n="env_clear">맑음</span></div>
+                    <div class="env-btn" onclick="sendCommand('weather rain'); showToast('Weather: Rain')"><i
+                            class="ph ph-cloud-rain"></i><span data-i18n="env_rain">비</span></div>
+                    <div class="env-btn" onclick="sendCommand('weather thunder'); showToast('Weather: Thunder')"><i
+                            class="ph ph-cloud-lightning"></i><span data-i18n="env_thunder">폭풍우</span></div>
+                    <div class="env-btn"
+                        onclick="sendCommand('gamerule doWeatherCycle false'); showToast('Weather Cycle: OFF')"><i
+                            class="ph ph-lock-key"></i><span data-i18n="env_lock">날씨 고정</span></div>
+                </div>
+
+                <h3 style="color:#ff9800; margin-top:30px;">⚔️ 난이도 제어</h3>
+                <div class="env-grid">
+                    <div class="env-btn"
+                        onclick="sendCommand('difficulty peaceful'); showToast('Difficulty: Peaceful')">
+                        <i class="ph ph-smiley"></i><span>평화로움</span>
+                    </div>
+                    <div class="env-btn" onclick="sendCommand('difficulty easy'); showToast('Difficulty: Easy')">
+                        <i class="ph ph-feather"></i><span>쉬움</span>
+                    </div>
+                    <div class="env-btn" onclick="sendCommand('difficulty normal'); showToast('Difficulty: Normal')">
+                        <i class="ph ph-shield"></i><span>보통</span>
+                    </div>
+                    <div class="env-btn" onclick="sendCommand('difficulty hard'); showToast('Difficulty: Hard')">
+                        <i class="ph ph-skull"></i><span>어려움</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="players" class="content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 data-i18n="title_player_list">접속자 목록</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-blue" style="padding:8px 15px; font-size:12px;"
+                            onclick="openListManager('whitelist')" data-i18n="btn_whitelist">화이트리스트 관리</button>
+                        <button class="btn btn-red" style="padding:8px 15px; font-size:12px;"
+                            onclick="openListManager('banlist')" data-i18n="btn_banlist">차단 목록 관리</button>
+                        <button class="btn btn-red" style="padding:8px 15px; font-size:12px; background:#8b0000;"
+                            onclick="openListManager('ip-banlist')">IP 차단 관리</button>
+                    </div>
+                </div>
+                <div id="playerList" class="player-list">
+                    <div class="empty-msg" style="text-align:center;color:#666;" data-i18n="msg_no_players">접속 중인 플레이어가
+                        없습니다.</div>
+                </div>
+            </div>
+
+            <div id="broadcast" class="content">
+                <h2 style="color:var(--accent-purple); margin-bottom:20px;">📢 광고 / 공지 보내기</h2>
+                <p style="color:#aaa; font-size:14px; margin-bottom:30px;">서버에 접속한 모든 플레이어에게 메시지를 띄웁니다.</p>
+
+                <div class="setting-card" style="border-color:var(--accent-purple);">
+                    <h3 style="color:var(--accent-purple);">🖥️ 화면 중앙 타이틀 (Title)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">가장 크게 보이는 제목입니다.</div>
+                    <input type="text" id="bcTitleInput" class="input-text full-width"
+                        placeholder="예: 환영합니다! / 이벤트 시작!">
+                    <div style="display:flex; justify-content:flex-end; gap:10px;">
+                        <button class="btn" style="background:#333; border:1px solid #555;"
+                            onclick="sendBroadcast('title_clear')">지우기</button>
+                        <button class="btn btn-purple" onclick="sendBroadcast('title')">보내기 (Send)</button>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3>📝 서브 타이틀 (Subtitle)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">타이틀 아래에 작게 나오는 설명입니다. (타이틀과 함께 보낼 때
+                        사용)</div>
+                    <input type="text" id="bcSubtitleInput" class="input-text full-width"
+                        placeholder="예: 잠시 후 게임이 시작됩니다.">
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn btn-blue" onclick="sendBroadcast('subtitle')">설정 (Set)</button>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3 style="color:var(--melon);">💬 액션 바 (Actionbar)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">아이템 슬롯 위에 작게 뜨는 메시지입니다.</div>
+                    <input type="text" id="bcActionbarInput" class="input-text full-width" placeholder="예: 현재 인원 5/10">
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn" style="background:var(--melon); color:#000;"
+                            onclick="sendBroadcast('actionbar')">보내기 (Send)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings" class="content">
+                <div style="text-align:right; margin-bottom:10px;"><button class="btn btn-blue" onclick="saveSettings()"
+                        style="padding:10px 20px;" data-i18n="btn_save_settings">💾 설정 저장하기</button></div>
+
+                <div class="setting-card" style="border-color:var(--melon);">
+                    <h3 style="color:var(--melon)" data-i18n="title_backup">💾 백업 설정</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_auto_backup">자동 백업 활성화</div>
+                        <label class="switch"><input type="checkbox" id="auto_backup"><span
+                                class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_backup_interval">백업 주기 (분)</div>
+                        <input type="number" id="backup_interval" class="input-num" value="60">
+                    </div>
+                    <div style="text-align:right; margin-top:10px;">
+                        <button class="btn btn-blue" onclick="triggerBackup()" data-i18n="btn_backup_now">지금
+                            백업하기</button>
+                    </div>
+                </div>
+
+                <div class="setting-card" style="border-color:var(--accent-blue);">
+                    <h3 style="color:var(--accent-blue)" data-i18n="title_java">☕ Java 설정</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_java_path">실행 경로 (java.exe)</div><input type="text" id="java_path"
+                            class="input-text" style="width:350px; text-align:left;" placeholder="java">
+                    </div>
+                    <p style="font-size:12px; color:#888; margin-top:5px;" data-i18n="msg_java_tip">* 1.18 이상은 Java 17+,
+                        그 이하는 Java 8 권장</p>
+                </div>
+
+                <div class="setting-card">
+                    <h3 style="color:var(--melon)" data-i18n="title_general">📝 일반 설정</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_motd">서버 이름 (MOTD)</div><input type="text" id="motd" class="input-text"
+                            style="width:300px;">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_server_port">서버 포트</div><input type="number" id="server-port"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_server_ip">서버 IP</div><input type="text" id="server-ip" class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_max_players">최대 인원</div><input type="number" id="max-players"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_online_mode">정품 인증</div><label class="switch"><input type="checkbox"
+                                id="online-mode"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_white_list">화이트리스트</div><label class="switch"><input type="checkbox"
+                                id="white-list"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_enforce_whitelist">화이트리스트 강제</div><label class="switch"><input
+                                type="checkbox" id="enforce-whitelist"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3 data-i18n="title_performance">🚀 성능 및 네트워크</h3>
+                    <div class="setting-row"><span><span data-i18n="set_ram">메모리 할당</span>: <span id="ramVal"
+                                style="color:var(--melon); font-weight:bold;">2 GB</span></span><input type="range"
+                            id="ramSlider" min="1" max="16" value="2" style="width: 200px; accent-color: var(--melon);"
+                            oninput="updateRamLabel(this.value)"></div>
+                    <div class="setting-row">
+                        <div data-i18n="set_view_distance">시야 거리</div><input type="number" id="view-distance"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_simulation_distance">연산 거리</div><input type="number"
+                            id="simulation-distance" class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_max_tick_time">최대 틱 시간</div><input type="number" id="max-tick-time"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_network_compression_threshold">네트워크 압축 임계값</div><input type="number"
+                            id="network-compression-threshold" class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_rate_limit">패킷 제한</div><input type="number" id="rate-limit"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_use_native_transport">네이티브 전송 사용</div><label class="switch"><input
+                                type="checkbox" id="use-native-transport"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_enable_status">상태 표시 활성화</div><label class="switch"><input type="checkbox"
+                                id="enable-status"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_broadcast_rcon_to_ops">RCON 로그 방송</div><label class="switch"><input
+                                type="checkbox" id="broadcast-rcon-to-ops"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_broadcast_console_to_ops">콘솔 로그 방송</div><label class="switch"><input
+                                type="checkbox" id="broadcast-console-to-ops"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3 data-i18n="title_world">🌍 월드 및 생성</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_level_name">월드 폴더명</div><input type="text" id="level-name"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_level_seed">월드 시드</div><input type="text" id="level-seed"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_level_type">월드 타입</div><input type="text" id="level-type"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_generator_settings">생성기 설정</div><input type="text" id="generator-settings"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_max_world_size">월드 최대 크기</div><input type="number" id="max-world-size"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_allow_nether">네더(지옥) 허용</div><label class="switch"><input type="checkbox"
+                                id="allow-nether"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_generate_structures">구조물 생성</div><label class="switch"><input
+                                type="checkbox" id="generate-structures"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3 data-i18n="title_gameplay">🎮 게임 플레이</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_gamemode">기본 게임모드</div>
+                        <select id="gamemode" class="input-select" style="width:150px;">
+                            <option value="survival">서바이벌 (Survival)</option>
+                            <option value="creative">크리에이티브 (Creative)</option>
+                            <option value="adventure">모험 (Adventure)</option>
+                            <option value="spectator">관전자 (Spectator)</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_force_gamemode">게임모드 강제</div><label class="switch"><input type="checkbox"
+                                id="force-gamemode"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_difficulty">난이도</div>
+                        <select id="difficulty" class="input-select" style="width:150px;">
+                            <option value="peaceful">평화로움 (Peaceful)</option>
+                            <option value="easy">쉬움 (Easy)</option>
+                            <option value="normal">보통 (Normal)</option>
+                            <option value="hard">어려움 (Hard)</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_hardcore">하드코어</div><label class="switch"><input type="checkbox"
+                                id="hardcore"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_pvp">PVP 허용</div><label class="switch"><input type="checkbox" id="pvp"><span
+                                class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_allow_flight">비행 허용</div><label class="switch"><input type="checkbox"
+                                id="allow-flight"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_spawn_monsters">몬스터 스폰</div><label class="switch"><input type="checkbox"
+                                id="spawn-monsters"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_spawn_animals">동물 스폰</div><label class="switch"><input type="checkbox"
+                                id="spawn-animals"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_spawn_npcs">NPC 스폰</div><label class="switch"><input type="checkbox"
+                                id="spawn-npcs"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_spawn_protection">스폰 보호 구역</div><input type="number" id="spawn-protection"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_enable_command_block">커맨드 블록 허용</div><label class="switch"><input
+                                type="checkbox" id="enable-command-block"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_player_idle_timeout">잠수 추방 시간(분)</div><input type="number"
+                            id="player-idle-timeout" class="input-num">
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3 data-i18n="title_security">🔒 보안 및 기타</h3>
+                    <div class="setting-row">
+                        <div data-i18n="set_op_permission_level">OP 권한 레벨</div><input type="number"
+                            id="op-permission-level" class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_log_ips">IP 기록</div><label class="switch"><input type="checkbox"
+                                id="log-ips"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_enforce_secure_profile">보안 프로필 강제</div><label class="switch"><input
+                                type="checkbox" id="enforce-secure-profile"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_prevent_proxy_connections">프록시 연결 방지</div><label class="switch"><input
+                                type="checkbox" id="prevent-proxy-connections"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_resource_pack">리소스팩 URL</div><input type="text" id="resource-pack"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_require_resource_pack">리소스팩 강제</div><label class="switch"><input
+                                type="checkbox" id="require-resource-pack"><span class="slider"></span></label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div data-i18n="set_enable_rcon">RCON 활성화</div><label class="switch"><input type="checkbox"
+                                id="enable-rcon"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_rcon_port">RCON 포트</div><input type="number" id="rcon.port"
+                            class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_rcon_password">RCON 비밀번호</div><input type="text" id="rcon.password"
+                            class="input-text">
+                    </div>
+
+                    <div class="setting-row">
+                        <div data-i18n="set_enable_query">Query 활성화</div><label class="switch"><input type="checkbox"
+                                id="enable-query"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_query_port">Query 포트</div><input type="number" id="query.port"
+                            class="input-num">
+                    </div>
+
+                    <div class="setting-row">
+                        <div data-i18n="set_sync_chunk_writes">청크 동기화 저장</div><label class="switch"><input
+                                type="checkbox" id="sync-chunk-writes"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_enable_jmx_monitoring">JMX 모니터링</div><label class="switch"><input
+                                type="checkbox" id="enable-jmx-monitoring"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_entity_broadcast_range_percentage">엔티티 방송 범위(%)</div><input type="number"
+                            id="entity-broadcast-range-percentage" class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_max_chained_neighbor_updates">최대 이웃 업데이트</div><input type="number"
+                            id="max-chained-neighbor-updates" class="input-num">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_region_file_compression">청크 압축 방식</div><input type="text"
+                            id="region-file-compression" class="input-text" style="width:100px;">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_accepts_transfers">서버 이동 허용</div><label class="switch"><input
+                                type="checkbox" id="accepts-transfers"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_bug_report_link">버그 리포트 링크</div><input type="text" id="bug-report-link"
+                            class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_initial_enabled_packs">초기 활성 팩</div><input type="text"
+                            id="initial-enabled-packs" class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_initial_disabled_packs">초기 비활성 팩</div><input type="text"
+                            id="initial-disabled-packs" class="input-text">
+                    </div>
+                    <div class="setting-row">
+                        <div data-i18n="set_debug">디버그 모드</div><label class="switch"><input type="checkbox"
+                                id="debug"><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="danger" class="content">
+                <div class="setting-card" style="border-color:#888;">
+                    <h3 style="color:#fff;">📂 파일 위치 확인</h3>
+                    <p style="color:#aaa; font-size:13px;">서버 파일이나 백업 파일이 저장된 실제 폴더를 엽니다.</p>
+                    <div style="display:flex; gap:10px; margin-top:15px;">
+                        <button class="btn" style="background:#333; border:1px solid #555;"
+                            onclick="openFolder('root')">📂 서버 폴더 열기</button>
+                        <button class="btn" style="background:#333; border:1px solid #555;"
+                            onclick="openFolder('backup')">💾 백업 폴더 열기</button>
+                    </div>
+                </div>
+
+                <div class="setting-card"
+                    style="border: 1px solid var(--accent-red); background: rgba(244, 67, 54, 0.05);">
+                    <h3 style="color:var(--accent-red)" data-i18n="title_danger">🚫 서버 삭제 (Danger Zone)</h3>
+                    <p style="color:#ccc; font-size:14px; line-height:1.6;" data-i18n="msg_danger">현재 서버를 영구 삭제합니다. 복구할
+                        수 없습니다.</p>
+                    <div style="text-align:right; margin-top:20px;"><button class="btn btn-red"
+                            onclick="askDeleteServer()" data-i18n="btn_delete_server">🗑️ 서버 영구 삭제</button></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="eulaModal" class="modal-overlay">
+        <div class="modal">
+            <h3 data-i18n="modal_eula_title">⚖️ EULA 동의</h3>
+            <p style="color:#ddd; margin-bottom:20px; line-height:1.5;" data-i18n="msg_eula_content">...</p>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;" onclick="closeModal('eulaModal')"
+                    data-i18n="btn_disagree">거절</button><button class="btn btn-blue"
+                    onclick="closeModal('eulaModal'); openModal('newServerModal')" data-i18n="btn_agree">동의합니다</button>
+            </div>
+        </div>
+    </div>
+    <div id="creditsModal" class="modal-overlay">
+        <div class="modal" style="width: 500px;">
+            <h3>📜 Credits</h3>
+            <div style="max-height: 400px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #ccc;">
+                <h4 style="color:var(--melon); margin-bottom:5px;">Project</h4>
+                <p><strong>NENE HELPER</strong><br>A lightweight and simple server generator for Minecraft.</p>
+                <h4 style="color:var(--accent-blue); margin-top:15px; margin-bottom:5px;">Developers</h4>
+                <ul style="padding-left: 20px; margin: 0;">
+                    <li><strong>JIN</strong> - Director, Design, Development</li>
+                    <li><strong>Hwisel</strong> - Information provision</li>
+                    <li><strong>Google Gemini AI</strong> - Design, Development</li>
+                </ul>
+                <h4 style="color:var(--accent-green); margin-top:15px; margin-bottom:5px;">Tech Stack</h4>
+                <ul style="padding-left: 20px; margin: 0;">
+                    <li><strong>Python</strong> - Backend Runtime</li>
+                    <li><strong>Eel</strong> - GUI Library (Chrome/Edge)</li>
+                    <li><strong>HTML/CSS/JS</strong> - Frontend Interface</li>
+                </ul>
+                <h4 style="color:var(--accent-red); margin-top:15px; margin-bottom:5px;">Libraries & Resources</h4>
+                <ul style="padding-left: 20px; margin: 0;">
+                    <li><strong>psutil</strong> - System Monitoring (CPU/RAM)</li>
+                    <li><strong>requests</strong> - API & Downloads</li>
+                    <li><strong>Pretendard</strong> - Font (by Orion Cactus)</li>
+                    <li><strong>Phosphor Icons</strong> - UI Icons</li>
+                    <li><strong>PaperMC API</strong> - Server Core Distribution</li>
+                    <li><strong>Minotar API</strong> - Player Skin Rendering</li>
+                </ul>
+                <p style="margin-top: 20px; font-size: 11px; color: #666; text-align: center;">Created with ❤️ by JIN
+                </p>
+            </div>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('creditsModal')">Close</button></div>
+        </div>
+    </div>
+    <div id="playerDetailModal" class="modal-overlay">
+        <div class="modal player-detail-modal">
+            <div class="skin-view">
+                <div
+                    style="width:100%; height:100%; background:#333; display:flex; align-items:center; justify-content:center; color:#666;">
+                    <i class="ph ph-user" style="font-size:64px;"></i>
+                </div>
+            </div>
+            <div class="p-detail-content">
+                <h2 id="pDetailName" style="margin:0;">PlayerName</h2>
+                <p id="pDetailUUID" style="font-size:11px; color:#666; margin:0;">UUID: Unknown</p>
+                <div style="margin-top:10px;">
+                    <div class="p-stat-row"><span class="p-stat-label" data-i18n="modal_p_join">접속 시간</span><span
+                            class="p-stat-val" id="pDetailJoin">00:00:00</span></div>
+                    <div class="p-stat-row"><span class="p-stat-label" data-i18n="modal_p_status">상태</span><span
+                            class="p-stat-val" style="color:var(--accent-green);">Online</span></div>
+                </div>
+                <div class="action-grid">
+                    <div class="act-btn" onclick="openWhisperModal()"
+                        style="border-color: var(--accent-blue); color: var(--accent-blue);">
+                        💬 귓속말 (Whisper)
+                    </div>
+                    <div class="act-btn" onclick="openTpModal()"
+                        style="border-color: var(--melon); color: var(--melon);">
+                        🚀 이동 (TP)
+                    </div>
+                    <div class="act-btn" onclick="askAction('op', 'OP')" data-i18n="act_op">관리자 (OP)</div>
+                    <div class="act-btn" onclick="askAction('deop', 'DEOP')" data-i18n="act_deop">권한 해제 (DEOP)</div>
+                    <div class="act-btn danger" onclick="askAction('kick', 'KICK')" data-i18n="act_kick">추방 (KICK)</div>
+                    <div class="act-btn danger" onclick="openBanOptionModal()" data-i18n="act_ban">차단 (BAN)</div>
+                </div><button class="btn" style="background:#333; width:100%; margin-top:10px;"
+                    onclick="closeModal('playerDetailModal')" data-i18n="btn_close">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="whisperModal" class="modal-overlay">
+        <div class="modal">
+            <h3>💬 귓속말 보내기</h3>
+            <p style="color:#aaa; font-size:13px; margin-bottom:10px;">To: <b id="whisperTarget" style="color:#fff"></b>
+            </p>
+            <input type="text" id="whisperInput" class="modal-input" placeholder="메시지 내용을 입력하세요..."
+                style="margin-bottom:20px;">
+            <div class="modal-btn-group">
+                <button class="btn" style="background:#333;" onclick="closeModal('whisperModal')">취소</button>
+                <button class="btn btn-blue" onclick="sendWhisperReal()">보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tpModal" class="modal-overlay">
+        <div class="modal" style="width:400px;">
+            <h3 style="color:var(--melon);">🚀 텔레포트 (TP)</h3>
+            <p style="color:#aaa; font-size:13px;">누구에게 이동하시겠습니까?</p>
+            <div id="tpList" class="list-box" style="height: 250px;">
+            </div>
+            <div class="modal-btn-group">
+                <button class="btn" style="background:#333;" onclick="closeModal('tpModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="banOptionModal" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color:var(--accent-red);">🚫 차단 옵션 선택</h3>
+            <p style="color:#ddd; margin-bottom:20px;">어떤 방식으로 차단하시겠습니까?</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="btn"
+                    style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
+                    onclick="executeBan('name')">닉네임 차단 (Name Ban)</button>
+                <button class="btn"
+                    style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
+                    onclick="executeBan('ip')">IP 차단 (IP Ban)</button>
+                <button class="btn btn-red" onclick="executeBan('both')">둘 다 차단 (Both)</button>
+            </div>
+            <div class="modal-btn-group" style="margin-top:20px;">
+                <button class="btn" style="background:#333;" onclick="closeModal('banOptionModal')">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="actionConfirmModal" class="modal-overlay">
+        <div class="modal">
+            <h3 data-i18n="modal_confirm_title">⚠️ 실행 확인</h3>
+            <p id="actionConfirmText" style="color:#ddd; margin-bottom:20px;">Execute?</p>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('actionConfirmModal')" data-i18n="btn_cancel">취소</button><button
+                    class="btn btn-blue" onclick="confirmAction()" data-i18n="btn_confirm">확인</button></div>
+        </div>
+    </div>
+    <div id="listManagerModal" class="modal-overlay">
+        <div class="modal list-manager-modal" style="width: 400px;">
+            <h3 id="listTitle" data-i18n="modal_list_title">목록 관리</h3>
+            <div style="display:flex; gap:5px; margin-bottom:10px;"><input type="text" id="listInput"
+                    class="modal-input" style="margin:0;" placeholder="Nickname / IP" data-i18n="ph_nickname"><button
+                    class="btn btn-blue" style="padding:0 15px;" onclick="addItemToList()"
+                    data-i18n="btn_add">추가</button></div>
+            <div id="listContainer" class="list-box"></div>
+            <div style="text-align:right;"><button class="btn" style="background:#333;"
+                    onclick="closeModal('listManagerModal')" data-i18n="btn_close">닫기</button></div>
+        </div>
+    </div>
+    <div id="newServerModal" class="modal-overlay">
+        <div class="modal">
+            <h3 data-i18n="modal_new_title">✨ 새 서버 생성</h3><label class="modal-label" data-i18n="modal_new_name">서버
+                이름</label>
+            <input type="text" id="newServerName" class="modal-input" placeholder="MyServer"
+                oninput="this.value=this.value.replace(/[<>:&quot;/\\|?*]/g,'')"><label class="modal-label"
+                data-i18n="modal_new_ver">버전</label><select id="newServerVersion" class="modal-input">
+                <option value="">Loading...</option>
+            </select>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('newServerModal')" data-i18n="btn_cancel">취소</button><button
+                    class="btn btn-blue" id="btnCreateReal" onclick="createNewServer()"
+                    data-i18n="btn_create">생성</button></div>
+        </div>
+    </div>
+    <div id="launcherSettingsModal" class="modal-overlay">
+        <div class="modal">
+            <h3 data-i18n="modal_setting_title">⚙️ 런처 설정</h3><label class="modal-label"
+                data-i18n="modal_setting_mirror">미러 URL</label><input type="text" id="mirrorUrlInput"
+                class="modal-input" value="https://api.papermc.io/v2/projects/paper"><label class="modal-label"
+                data-i18n="modal_setting_lang">언어 (Language)</label><select id="langSelect" class="modal-input"
+                onchange="changeLanguage(this.value)">
+                <option value="ko">한국어 (Korean)</option>
+                <option value="en">English</option>
+                <option value="ja">日本語 (Japanese)</option>
+                <option value="zh">简体中文 (Simplified Chinese)</option>
+            </select>
+            <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; text-align: center;"><button
+                    class="btn" style="background: #333; width: 100%; border: 1px solid #444; color: #aaa;"
+                    onclick="closeModal('launcherSettingsModal'); openModal('creditsModal')">📜 Credits</button></div>
+            <div class="modal-btn-group" style="margin-top: 15px;"><button class="btn" style="background:#333;"
+                    onclick="closeModal('launcherSettingsModal')" data-i18n="btn_close">닫기</button><button
+                    class="btn btn-blue" onclick="saveLauncherSettings()" data-i18n="btn_save">저장</button></div>
+        </div>
+    </div>
+    <div id="deleteConfirmModal" class="modal-overlay">
+        <div class="modal" style="border-color:var(--accent-red);">
+            <h3 style="color:var(--accent-red)" data-i18n="modal_del_title">🚫 정말 삭제하시겠습니까?</h3>
+            <p style="color:#ddd;"><span data-i18n="modal_del_msg">선택된 서버: </span><b id="delTargetName"
+                    style="color:#fff"></b></p>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('deleteConfirmModal')" data-i18n="btn_cancel">취소</button><button
+                    class="btn btn-red" onclick="confirmDeleteProcess()" data-i18n="btn_delete">제거</button></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSelectedServerName = "";
+        let currentLang = "ko";
+        let currentTranslations = {};
+        let globalPlayerList = [];
+
+        window.onload = async function () {
+            await eel.init_system_py()();
+            await checkSystem();
+            await loadLauncherConfig();
+            refreshServerList();
+            loadVersionList();
+        };
+
+        async function tryCloseApp() {
+            const result = await eel.try_close_app_py()();
+
+            if (result === "blocked") {
+                const msg = currentTranslations["msg_cannot_close"] || "⚠️ Server is running!";
+                showToast(msg, "error");
+            } else {
+                window.close();
+            }
+        }
+
+        async function loadLauncherConfig() { const conf = await eel.get_launcher_config_py()(); if (conf) { if (conf.language) await changeLanguage(conf.language); if (conf.mirror_url) document.getElementById('mirrorUrlInput').value = conf.mirror_url; document.getElementById('langSelect').value = currentLang; } }
+        async function saveLauncherSettings() { const lang = document.getElementById('langSelect').value; const mirror = document.getElementById('mirrorUrlInput').value; const data = { "language": lang, "mirror_url": mirror }; await eel.save_launcher_config_py(data)(); showToast("Saved", "success"); closeModal('launcherSettingsModal'); }
+        async function changeLanguage(langCode) { currentLang = langCode; currentTranslations = await eel.get_translation_py(langCode)(); if (!currentTranslations) return; document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (currentTranslations[key]) { if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = currentTranslations[key]; } else { el.innerHTML = currentTranslations[key]; } } }); }
+        async function loadVersionList() { const select = document.getElementById('newServerVersion'); const versions = await eel.get_papermc_versions()(); if (versions && versions.length > 0) { select.innerHTML = ""; versions.forEach(v => { select.innerHTML += `<option value="${v}">${v}</option>`; }); } else { select.innerHTML = `<option value="1.21.1">1.21.1</option><option value="1.20.4">1.20.4</option>`; } }
+        async function checkSystem() { await eel.check_java_status()(); }
+        async function refreshServerList() { let servers = await eel.get_server_list_py()(); let list = document.getElementById('sidebarList'); list.innerHTML = ""; servers.forEach(s => { const isActive = (s.name === currentSelectedServerName) ? "active" : ""; list.innerHTML += `<div class="server-item ${isActive}" onclick="selectServer('${s.name}', this)"><h4>${s.name}</h4><p><span style="color:${s.status === 'Running' ? 'var(--accent-green)' : '#777'}">${s.status}</span><span style="color:#666; margin-left:5px; font-size:11px;">${s.version}</span></p></div>`; }); }
+        async function selectServer(name, el) { currentSelectedServerName = name; document.getElementById('logs').innerHTML = ""; document.getElementById('emptyScreen').style.display = 'none'; document.getElementById('mainContent').classList.add('active'); document.querySelectorAll('.server-item').forEach(i => i.classList.remove('active')); if (el) el.classList.add('active'); document.getElementById('headerTitle').innerText = name; await eel.select_server_py(name)(); loadSettings(); }
+        async function createNewServer() { let name = document.getElementById('newServerName').value; let ver = document.getElementById('newServerVersion').value; let mirror = document.getElementById('mirrorUrlInput').value; let btn = document.getElementById('btnCreateReal'); if (!name) return showToast("Name required", "error"); btn.disabled = true; btn.innerText = "..."; let res = await eel.create_new_server_real(name, ver, mirror)(); btn.disabled = false; changeLanguage(currentLang); closeModal('newServerModal'); if (res.includes("✅")) { showToast("Success", "success"); refreshServerList(); } else showToast(res, "error"); }
+        let serverToDelete = "";
+        function askDeleteServer() { let name = document.getElementById('headerTitle').innerText; serverToDelete = name; document.getElementById('delTargetName').innerText = name; openModal('deleteConfirmModal'); }
+        async function confirmDeleteProcess() { closeModal('deleteConfirmModal'); let res = await eel.delete_server_real(serverToDelete)(); if (res.includes("✅")) { showToast("Deleted", "success"); document.getElementById('emptyScreen').style.display = 'flex'; document.getElementById('mainContent').classList.remove('active'); refreshServerList(); } else { showToast(res, "error"); } }
+        const checkboxSettings = ['allow-flight', 'allow-nether', 'broadcast-console-to-ops', 'broadcast-rcon-to-ops', 'debug', 'enable-command-block', 'enable-jmx-monitoring', 'enable-query', 'enable-rcon', 'enable-status', 'enforce-secure-profile', 'enforce-whitelist', 'force-gamemode', 'generate-structures', 'hardcore', 'hide-online-players', 'log-ips', 'online-mode', 'prevent-proxy-connections', 'pvp', 'require-resource-pack', 'spawn-animals', 'spawn-monsters', 'spawn-npcs', 'sync-chunk-writes', 'use-native-transport', 'white-list', 'accepts-transfers', 'auto_backup'];
+        const textSettings = ['java_path', 'motd', 'max-players', 'server-port', 'server-ip', 'view-distance', 'simulation-distance', 'max-tick-time', 'network-compression-threshold', 'rate-limit', 'max-world-size', 'level-name', 'level-seed', 'level-type', 'generator-settings', 'gamemode', 'difficulty', 'spawn-protection', 'player-idle-timeout', 'op-permission-level', 'resource-pack', 'rcon.port', 'rcon.password', 'query.port', 'entity-broadcast-range-percentage', 'max-chained-neighbor-updates', 'region-file-compression', 'bug-report-link', 'initial-enabled-packs', 'initial-disabled-packs', 'backup_interval'];
+        async function loadSettings() { let props = await eel.load_properties_py()(); if (!props) return; checkboxSettings.forEach(id => { const el = document.getElementById(id); if (el) el.checked = (props[id] === 'true' || props[id] === true); }); textSettings.forEach(id => { const el = document.getElementById(id); if (el && props[id]) el.value = String(props[id]).replace(/\\:/g, ":"); }); const javaEl = document.getElementById('java_path'); if (props['java_path']) javaEl.value = props['java_path']; else javaEl.value = "java"; }
+        async function saveSettings() { let data = {}; checkboxSettings.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.checked; }); textSettings.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.value; }); let res = await eel.save_properties_py(data)(); showToast("Saved", "success"); }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(() => document.getElementById(id).classList.add('show'), 10); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); setTimeout(() => document.getElementById(id).style.display = 'none', 300); }
+        function updateRamLabel(val) { document.getElementById('ramVal').innerText = val + " GB"; document.getElementById('ramDisplay').innerText = val + " GB"; }
+        async function startServer() { let ram = document.getElementById('ramSlider').value; document.getElementById('btnStart').classList.add('hidden'); document.getElementById('btnStop').classList.remove('hidden'); document.getElementById('statusText').innerText = "LOADING..."; showToast("Starting...", "info"); let res = await eel.start_server_py(ram)(); if (res.includes("❌") || res.includes("⚠️")) { showToast(res, "error"); update_status_js(false); } else setTimeout(refreshServerList, 1000); }
+        function switchTab(id, btn) { document.querySelectorAll('.content').forEach(e => e.classList.remove('active')); document.querySelectorAll('.tab').forEach(e => e.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); if (id === 'settings') loadSettings(); }
+        function switchTab(id, btn) { document.querySelectorAll('.content').forEach(e => e.classList.remove('active')); document.querySelectorAll('.tab').forEach(e => e.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); if (id === 'settings') loadSettings(); }
+        function sendCommand(cmd) { eel.send_command_py(cmd); }
+        document.getElementById('cmdInput').addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.target.value.trim() !== "") { sendCommand(e.target.value); e.target.value = ""; } });
+        async function triggerBackup() { if (!currentSelectedServerName) return; const res = await eel.trigger_backup_py(currentSelectedServerName)(); showToast("Backup Started", "info"); }
+        eel.expose(update_player_list_js);
+        function update_player_list_js(players) {
+            globalPlayerList = players;
+            const listEl = document.getElementById('playerList'); listEl.innerHTML = ""; if (document.getElementById('playerCount')) document.getElementById('playerCount').innerText = players.length; if (players.length === 0) { const msg = currentTranslations["msg_no_players"] || "No players."; listEl.innerHTML = `<div class="empty-msg" style="text-align:center;color:#666;">${msg}</div>`; return; } players.forEach(name => { listEl.innerHTML += `<div class="player-card" onclick="openPlayerDetail('${name}')"><div class="p-info"><div class="avatar" style="background:#444;"></div><div style="font-weight:bold;">${name}</div></div><div style="font-size:12px; color:var(--accent-green);">● Online</div></div>`; });
+        }
+        let currentDetailPlayer = "";
+        async function openPlayerDetail(name) { currentDetailPlayer = name; document.getElementById('pDetailName').innerText = name; document.getElementById('pDetailJoin').innerText = "..."; document.getElementById('pDetailUUID').innerText = "..."; openModal('playerDetailModal'); const info = await eel.get_player_detail_py(name)(); if (info) { document.getElementById('pDetailJoin').innerText = info.join_time; document.getElementById('pDetailUUID').innerText = "UUID: " + info.uuid; } }
+        let pendingAction = null; let pendingTarget = "";
+        function askAction(action, desc) { pendingAction = action; pendingTarget = currentDetailPlayer; const t = currentTranslations; document.getElementById('actionConfirmText').innerHTML = `${t.modal_del_msg} <b style="color:white">${pendingTarget}</b><br>Action: <b>${desc}</b>`; openModal('actionConfirmModal'); }
+
+        async function confirmAction() {
+            closeModal('actionConfirmModal');
+            if (!pendingAction || !pendingTarget) return;
+            let cmd = "";
+            if (pendingAction === 'op') cmd = `op ${pendingTarget}`;
+            else if (pendingAction === 'deop') cmd = `deop ${pendingTarget}`;
+            else if (pendingAction === 'kick') cmd = `kick ${pendingTarget} Kicked by Operator`;
+            else if (pendingAction === 'ban') cmd = `ban ${pendingTarget} Banned by Operator`;
+
+            if (cmd) { await eel.execute_command_py(cmd)(); showToast("Command Sent", "success"); if (pendingAction === 'kick' || pendingAction === 'ban') closeModal('playerDetailModal'); }
+            pendingAction = null;
+        }
+
+        let currentListType = "";
+        async function openListManager(type) {
+            currentListType = type;
+            const t = currentTranslations;
+            // [수정됨] 타입에 따라 제목 변경
+            if (type === 'whitelist') document.getElementById('listTitle').innerText = t.btn_whitelist;
+            else if (type === 'banlist') document.getElementById('listTitle').innerText = t.btn_banlist;
+            else document.getElementById('listTitle').innerText = "IP 차단 관리";
+
+            document.getElementById('listInput').value = "";
+            openModal('listManagerModal');
+            await refreshListManager();
+        }
+
+        async function refreshListManager() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = "...";
+            const list = await eel.get_manage_list_py(currentListType)();
+            container.innerHTML = "";
+            if (list.length === 0) { container.innerHTML = "<div style='color:#666; text-align:center; padding:20px;'>Empty</div>"; return; }
+            const t = currentTranslations;
+            const btnRemove = t.btn_delete || "Delete";
+            list.forEach(name => {
+                // [수정됨] 타입별 삭제 버튼 액션 분기
+                let cmdType = 'remove';
+                if (currentListType === 'banlist') cmdType = 'pardon';
+                else if (currentListType === 'ip-banlist') cmdType = 'pardon-ip';
+
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `<span>${name}</span> <button class="list-btn-s" onclick="modifyList('${cmdType}', '${name}')">${btnRemove}</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        async function addItemToList() {
+            const name = document.getElementById('listInput').value;
+            if (!name) return;
+            // [수정됨] 타입별 추가 명령어 분기
+            let cmd = "";
+            if (currentListType === 'whitelist') cmd = `whitelist add ${name}`;
+            else if (currentListType === 'banlist') cmd = `ban ${name}`;
+            else if (currentListType === 'ip-banlist') cmd = `ban-ip ${name}`;
+
+            eel.send_command_py(cmd);
+            document.getElementById('listInput').value = "";
+            showToast("Added (wait...)", "info");
+            setTimeout(refreshListManager, 1000);
+        }
+
+        async function modifyList(action, name) {
+            let cmd = "";
+            // [수정됨] 삭제 명령어 분기
+            if (action === 'remove') cmd = `whitelist remove ${name}`;
+            else if (action === 'pardon') cmd = `pardon ${name}`;
+            else if (action === 'pardon-ip') cmd = `pardon-ip ${name}`;
+
+            eel.send_command_py(cmd);
+            showToast("Removed", "info");
+            setTimeout(refreshListManager, 1000);
+        }
+
+        eel.expose(update_status_js);
+        function update_status_js(isOn) { if (isOn) { document.getElementById('statusText').innerText = "ONLINE"; document.getElementById('statusSimple').innerText = "Running"; document.getElementById('statusSimple').style.color = "#2ba640"; document.getElementById('btnStart').classList.add('hidden'); document.getElementById('btnStop').classList.remove('hidden'); } else { document.getElementById('statusText').innerText = "OFFLINE"; document.getElementById('statusSimple').innerText = "Stopped"; document.getElementById('statusSimple').style.color = "#fff"; document.getElementById('btnStart').classList.remove('hidden'); document.getElementById('btnStop').classList.add('hidden'); } refreshServerList(); }
+        eel.expose(add_log_js);
+        function add_log_js(msg) { const l = document.getElementById('logs'); l.innerHTML += `<div>${msg}</div>`; l.scrollTop = l.scrollHeight; }
+        eel.expose(restore_logs_js);
+        function restore_logs_js(arr) { const l = document.getElementById('logs'); l.innerHTML = ""; arr.forEach(m => l.innerHTML += `<div>${m}</div>`); l.scrollTop = l.scrollHeight; }
+        eel.expose(showToast);
+        function showToast(msg, type = 'info') { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast ${type}`; t.innerText = msg; c.appendChild(t); setTimeout(() => t.remove(), 3000); }
+        eel.expose(update_cpu_usage_js);
+        function update_cpu_usage_js(percent) { const cpuEl = document.getElementById('sysCpu'); if (cpuEl) cpuEl.innerText = percent + "%"; }
+        eel.expose(update_download_progress_js);
+        function update_download_progress_js(txt) { const btn = document.getElementById('btnCreateReal'); if (btn) btn.innerText = txt.includes('%') ? `... ${txt}%` : txt; }
+
+        function openWhisperModal() {
+            document.getElementById('whisperTarget').innerText = currentDetailPlayer;
+            document.getElementById('whisperInput').value = "";
+            openModal('whisperModal');
+        }
+
+        function sendWhisperReal() {
+            let msg = document.getElementById('whisperInput').value;
+            if (!msg) return showToast("내용을 입력하세요", "error");
+            let cmd = `tell ${currentDetailPlayer} ${msg}`;
+            eel.send_command_py(cmd);
+            showToast("귓속말 전송 완료", "success");
+            closeModal('whisperModal');
+        }
+
+        function sendBroadcast(type) {
+            let msg = "";
+            let cmd = "";
+
+            if (type === 'title') {
+                msg = document.getElementById('bcTitleInput').value;
+                if (!msg) return showToast("타이틀 내용을 입력하세요", "error");
+                cmd = `title @a title "${msg}"`;
+            }
+            else if (type === 'subtitle') {
+                msg = document.getElementById('bcSubtitleInput').value;
+                if (!msg) return showToast("서브 타이틀 내용을 입력하세요", "error");
+                cmd = `title @a subtitle "${msg}"`;
+                showToast("서브 타이틀 설정됨 (타이틀을 보내면 같이 뜹니다)", "info");
+            }
+            else if (type === 'actionbar') {
+                msg = document.getElementById('bcActionbarInput').value;
+                if (!msg) return showToast("액션 바 내용을 입력하세요", "error");
+                cmd = `title @a actionbar "${msg}"`;
+            }
+            else if (type === 'title_clear') {
+                cmd = `title @a clear`;
+                document.getElementById('bcTitleInput').value = "";
+                document.getElementById('bcSubtitleInput').value = "";
+                showToast("타이틀 초기화", "info");
+            }
+
+            if (cmd) {
+                eel.send_command_py(cmd);
+                if (type !== 'subtitle' && type !== 'title_clear') {
+                    showToast("메시지 전송 완료", "success");
+                }
+            }
+        }
+
+        async function openFolder(type) {
+            if (!currentSelectedServerName) return showToast("서버를 선택하세요", "error");
+            const res = await eel.open_folder_py(currentSelectedServerName, type)();
+            if (res.includes("✅")) showToast("폴더가 열렸습니다", "success");
+            else showToast(res, "error");
+        }
+
+        function openTpModal() {
+            const targets = globalPlayerList.filter(p => p !== currentDetailPlayer);
+            const container = document.getElementById('tpList');
+            container.innerHTML = "";
+
+            if (targets.length === 0) {
+                container.innerHTML = "<div style='text-align:center; color:#666; margin-top:20px;'>이동할 상대가 없습니다.</div>";
+            } else {
+                targets.forEach(target => {
+                    const btn = document.createElement('div');
+                    btn.className = 'list-item';
+                    btn.style.cursor = 'pointer';
+                    btn.innerHTML = `<span style='font-weight:bold;'>${target}</span> <button class='list-btn-s' style='border-color:var(--melon); color:var(--melon);' onclick='teleportTo("${target}")'>이동</button>`;
+                    container.appendChild(btn);
+                });
+            }
+            openModal('tpModal');
+        }
+
+        function teleportTo(targetName) {
+            const cmd = `tp ${currentDetailPlayer} ${targetName}`;
+            eel.send_command_py(cmd);
+            showToast(`${targetName}에게 이동합니다`, "success");
+            closeModal('tpModal');
+        }
+
+        // [추가됨] 차단 옵션 팝업 열기
+        function openBanOptionModal() {
+            closeModal('playerDetailModal'); // 상세 창 닫고
+            openModal('banOptionModal');     // 옵션 창 열기
+        }
+
+        // [추가됨] 차단 실행 함수
+        async function executeBan(type) {
+            let cmd = "";
+            const target = currentDetailPlayer;
+
+            if (type === 'name') {
+                cmd = `ban ${target} Banned by Operator`;
+                showToast("닉네임 차단 실행", "info");
+            } else if (type === 'ip') {
+                // ban-ip 플레이어이름 -> 자동으로 IP 찾아서 차단함
+                cmd = `ban-ip ${target} IP Banned by Operator`;
+                showToast("IP 차단 실행", "info");
+            } else if (type === 'both') {
+                // 둘 다 실행
+                await eel.execute_command_py(`ban ${target} Banned`);
+                await eel.execute_command_py(`ban-ip ${target} IP Banned`);
+                showToast("닉네임 및 IP 차단 실행", "success");
+                closeModal('banOptionModal');
+                return;
+            }
+
+            if (cmd) {
+                await eel.execute_command_py(cmd);
+                showToast("명령어 전송 완료", "success");
+            }
+            closeModal('banOptionModal');
+        }
+    </script>
+</body>
+
+</html>
