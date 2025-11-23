@@ -47,7 +47,7 @@ PaperMC API — Paper server core distribution
 
 -----------------------------------------------------
 
-Some features use AI
+Some features were created with AI.
 If any problems arise from this program, it will be taken down without hesitation.
 
 -----------------------------------------------------
