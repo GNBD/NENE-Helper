@@ -14,7 +14,8 @@ It automatically fetches the latest server core through the PaperMC API, and its
 ✔️ Python backend + HTML frontend structure
 
 
-<img width="1386" height="810" alt="image" src="https://github.com/user-attachments/assets/f19f436f-b24d-4bf6-8799-9d8f1b2d03d0" />
+<img width="1386" height="810" alt="스크린샷 2025-11-23 193858" src="https://github.com/user-attachments/assets/7ffcff58-54e5-4114-921c-e6a18e035c66" />
+
 
 
 https://nenehelper.netlify.app/
