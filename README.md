@@ -20,7 +20,7 @@ It automatically fetches the latest server core through the PaperMC API, and its
 
 https://nenehelper.netlify.app/
 
-
+-----------------------------------------------------
 
 🛠️ Tech Stack
 Backend
@@ -30,6 +30,8 @@ Eel — Python ↔ HTML bridge
 
 Frontend
 HTML / CSS / JavaScript — User interface
+
+-----------------------------------------------------
 
 
 📦 Libraries & Resources
@@ -43,7 +45,7 @@ Phosphor Icons — UI icons
 
 PaperMC API — Paper server core distribution
 
-
+-----------------------------------------------------
 
 
 👤 Developers
@@ -55,6 +57,6 @@ Google Gemini AI — Design, Development
 
 If any problems arise from this program, it will be taken down without hesitation.
 
-
+-----------------------------------------------------
 
 ❤️ Created with love by JIN
