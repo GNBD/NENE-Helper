@@ -48,11 +48,13 @@ PaperMC API — Paper server core distribution
 
 👤 Developers
 JIN — Director, Design, Development
+
 Hwisel — Information Provision
+
 Google Gemini AI — Design, Development
+
+If any problems arise from this program, it will be taken down without hesitation.
 
 
 
 ❤️ Created with love by JIN
-
-If any problems arise from this program, it will be taken down without hesitation.
