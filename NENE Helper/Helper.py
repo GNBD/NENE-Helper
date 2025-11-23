@@ -260,7 +260,6 @@ def execute_command_py(cmd):
 
 @eel.expose
 def create_new_server_real(server_name, version, mirror_url):
-    # [수정됨] 파일 시스템에서 금지된 문자만 제거하고 모든 언어 허용
     clean = re.sub(r'[<>:"/\\|?*]', '', server_name).strip()
     if not clean: return "❌ Name Error"
     target = os.path.join(BASE_SERVERS_DIR, clean)
@@ -547,6 +546,88 @@ def system_monitor_thread():
                                     elif (cur - lst) >= iv: backup_server(name)
                     except: pass
         except: pass
+
+@eel.expose
+def get_public_ip_py():
+    try:
+        return requests.get('https://api.ipify.org', timeout=3).text
+    except:
+        return "Unknown"
+
+# ==========================================================
+# [추가된 기능] 플러그인 관리 (Plugins)
+# ==========================================================
+@eel.expose
+def get_plugin_list_py():
+    if not current_view_server: return []
+    
+    plugins_dir = os.path.join(BASE_SERVERS_DIR, current_view_server, "plugins")
+    if not os.path.exists(plugins_dir):
+        try: os.makedirs(plugins_dir)
+        except: return []
+        
+    plugin_list = []
+    try:
+        for file in os.listdir(plugins_dir):
+            # .jar 파일 (켜짐)
+            if file.endswith(".jar"):
+                plugin_list.append({
+                    "name": file,           # 표시 이름
+                    "filename": file,       # 실제 파일명
+                    "enabled": True
+                })
+            # .jar.disabled 파일 (꺼짐)
+            elif file.endswith(".jar.disabled"):
+                # 표시 이름은 .disabled 떼고 보여줌
+                display_name = file.replace(".jar.disabled", ".jar")
+                plugin_list.append({
+                    "name": display_name,
+                    "filename": file,
+                    "enabled": False
+                })
+    except: pass
+    
+    # 이름 순 정렬
+    return sorted(plugin_list, key=lambda x: x['name'])
+
+@eel.expose
+def toggle_plugin_py(filename, make_active):
+    if not current_view_server: return "❌ No Server"
+    plugins_dir = os.path.join(BASE_SERVERS_DIR, current_view_server, "plugins")
+    old_path = os.path.join(plugins_dir, filename)
+    
+    if not os.path.exists(old_path): return "❌ File Not Found"
+    
+    try:
+        if make_active:
+            # 현재 .disabled 상태 -> .jar로 변경
+            # 파일명이 ~~~.jar.disabled 라고 가정
+            new_name = filename.replace(".jar.disabled", ".jar")
+            new_path = os.path.join(plugins_dir, new_name)
+            os.rename(old_path, new_path)
+            return "✅ Enabled"
+        else:
+            # 현재 .jar 상태 -> .disabled로 변경
+            new_name = filename + ".disabled"
+            new_path = os.path.join(plugins_dir, new_name)
+            os.rename(old_path, new_path)
+            return "✅ Disabled"
+    except Exception as e:
+        return f"❌ Error: {e}"
+
+@eel.expose
+def delete_plugin_py(filename):
+    if not current_view_server: return "❌ No Server"
+    plugins_dir = os.path.join(BASE_SERVERS_DIR, current_view_server, "plugins")
+    target_path = os.path.join(plugins_dir, filename)
+    
+    if not os.path.exists(target_path): return "❌ File Not Found"
+    
+    try:
+        os.remove(target_path)
+        return "✅ Deleted"
+    except Exception as e:
+        return f"❌ Error: {e}"
 
 if __name__ == "__main__":
     t = threading.Thread(target=system_monitor_thread)

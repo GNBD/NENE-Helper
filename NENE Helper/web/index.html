@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* 스타일 유지하되, 타이틀바 제거 및 body 여백 조정 */
+        /* 스타일 유지 */
         :root {
             --bg-body: #181818;
             --bg-sidebar: #212121;
@@ -19,7 +19,9 @@
             --accent-green: #2ba640;
             --accent-red: #f44336;
             --accent-purple: #e040fb;
-            /* 광고/공지용 색상 */
+            --accent-gold: #ffd700;
+            --accent-orange: #ff9800;
+            /* 플러그인용 색상 */
             --melon: #00e676;
             --text-main: #ffffff;
             --text-sub: #aaaaaa;
@@ -41,8 +43,6 @@
             height: 100vh;
             display: flex;
         }
-
-        /* 타이틀바 스타일 제거 */
 
         .sidebar {
             width: 240px;
@@ -234,10 +234,15 @@
             color: var(--accent-red);
         }
 
-        /* [추가] 광고 탭 스타일 */
         .tab.broadcast.active {
             color: var(--accent-purple);
             border-bottom-color: var(--accent-purple);
+        }
+
+        /* [추가됨] 플러그인 탭 스타일 */
+        .tab.plugins.active {
+            color: var(--accent-orange);
+            border-bottom-color: var(--accent-orange);
         }
 
         .content {
@@ -255,7 +260,7 @@
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
         }
 
@@ -334,6 +339,11 @@
 
         .btn-purple {
             background: var(--accent-purple);
+        }
+
+        .btn-yellow {
+            background: var(--accent-gold);
+            color: #000;
         }
 
         .env-grid {
@@ -725,6 +735,26 @@
             background: var(--accent-red);
             color: white;
         }
+
+        /* [추가됨] 플러그인 아이템 스타일 */
+        .plugin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg-card);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .plugin-info-area {
+            flex: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -741,11 +771,9 @@
     </aside>
 
     <main class="main">
-        <div id="emptyScreen" class="empty-screen">
-            <i class="ph ph-arrow-elbow-down-left"></i>
+        <div id="emptyScreen" class="empty-screen"><i class="ph ph-arrow-elbow-down-left"></i>
             <h3 data-i18n="msg_select_server">서버를 선택하세요</h3>
         </div>
-
         <div id="mainContent" class="main-content-wrapper">
             <div class="header">
                 <div class="header-left">
@@ -757,10 +785,11 @@
             </div>
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('dashboard', this)" data-i18n="tab_dashboard">대시보드</div>
-                <div class="tab" onclick="switchTab('environment', this)" data-i18n="tab_env">월드 환경</div>
+                <div class="tab" onclick="switchTab('environment', this)" data-i18n="tab_env">서버 관리</div>
                 <div class="tab" onclick="switchTab('players', this)" data-i18n="tab_players">플레이어 관리</div>
                 <div class="tab broadcast" onclick="switchTab('broadcast', this)">📢 광고/공지</div>
                 <div class="tab" onclick="switchTab('settings', this)" data-i18n="tab_settings">전체 설정</div>
+                <div class="tab plugins" onclick="switchTab('plugins', this)">🧩 플러그인</div>
                 <div class="tab danger" onclick="switchTab('danger', this)" data-i18n="tab_danger">⛔ 위험 구간</div>
             </div>
 
@@ -782,6 +811,11 @@
                         <div class="card-label" data-i18n="card_status">Status</div>
                         <div class="card-value" id="statusSimple" style="font-size:20px;">Stopped</div>
                     </div>
+                    <div class="card">
+                        <div class="card-label">Public IP</div>
+                        <div class="card-value" id="publicIp" style="font-size:16px; word-break:break-all;">Checking...
+                        </div>
+                    </div>
                 </div>
                 <div class="console-box">
                     <div class="logs" id="logs"></div>
@@ -792,8 +826,10 @@
                     </div>
                 </div>
                 <div class="action-bar">
-                    <button class="btn btn-red hidden" id="btnStop" onclick="sendCommand('stop')"
-                        data-i18n="btn_stop">서버 종료</button>
+                    <button class="btn btn-yellow hidden" id="btnRestart" onclick="askRestart()"
+                        data-i18n="btn_restart">재시작</button>
+                    <button class="btn btn-red hidden" id="btnStop" onclick="askStop()" data-i18n="btn_stop">서버
+                        종료</button>
                     <button class="btn btn-blue" id="btnStart" onclick="startServer()" data-i18n="btn_start">서버
                         시작</button>
                 </div>
@@ -823,22 +859,17 @@
                         onclick="sendCommand('gamerule doWeatherCycle false'); showToast('Weather Cycle: OFF')"><i
                             class="ph ph-lock-key"></i><span data-i18n="env_lock">날씨 고정</span></div>
                 </div>
-
                 <h3 style="color:#ff9800; margin-top:30px;">⚔️ 난이도 제어</h3>
                 <div class="env-grid">
                     <div class="env-btn"
-                        onclick="sendCommand('difficulty peaceful'); showToast('Difficulty: Peaceful')">
-                        <i class="ph ph-smiley"></i><span>평화로움</span>
-                    </div>
-                    <div class="env-btn" onclick="sendCommand('difficulty easy'); showToast('Difficulty: Easy')">
-                        <i class="ph ph-feather"></i><span>쉬움</span>
-                    </div>
-                    <div class="env-btn" onclick="sendCommand('difficulty normal'); showToast('Difficulty: Normal')">
-                        <i class="ph ph-shield"></i><span>보통</span>
-                    </div>
-                    <div class="env-btn" onclick="sendCommand('difficulty hard'); showToast('Difficulty: Hard')">
-                        <i class="ph ph-skull"></i><span>어려움</span>
-                    </div>
+                        onclick="sendCommand('difficulty peaceful'); showToast('Difficulty: Peaceful')"><i
+                            class="ph ph-smiley"></i><span>평화로움</span></div>
+                    <div class="env-btn" onclick="sendCommand('difficulty easy'); showToast('Difficulty: Easy')"><i
+                            class="ph ph-feather"></i><span>쉬움</span></div>
+                    <div class="env-btn" onclick="sendCommand('difficulty normal'); showToast('Difficulty: Normal')"><i
+                            class="ph ph-shield"></i><span>보통</span></div>
+                    <div class="env-btn" onclick="sendCommand('difficulty hard'); showToast('Difficulty: Hard')"><i
+                            class="ph ph-skull"></i><span>어려움</span></div>
                 </div>
             </div>
 
@@ -863,7 +894,6 @@
             <div id="broadcast" class="content">
                 <h2 style="color:var(--accent-purple); margin-bottom:20px;">📢 광고 / 공지 보내기</h2>
                 <p style="color:#aaa; font-size:14px; margin-bottom:30px;">서버에 접속한 모든 플레이어에게 메시지를 띄웁니다.</p>
-
                 <div class="setting-card" style="border-color:var(--accent-purple);">
                     <h3 style="color:var(--accent-purple);">🖥️ 화면 중앙 타이틀 (Title)</h3>
                     <div style="margin-bottom:10px; color:#ddd; font-size:13px;">가장 크게 보이는 제목입니다.</div>
@@ -875,18 +905,16 @@
                         <button class="btn btn-purple" onclick="sendBroadcast('title')">보내기 (Send)</button>
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3>📝 서브 타이틀 (Subtitle)</h3>
-                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">타이틀 아래에 작게 나오는 설명입니다. (타이틀과 함께 보낼 때
-                        사용)</div>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">타이틀 아래에 작게 나오는 설명입니다. (타이틀과 함께 보낼 때 사용)
+                    </div>
                     <input type="text" id="bcSubtitleInput" class="input-text full-width"
                         placeholder="예: 잠시 후 게임이 시작됩니다.">
                     <div style="display:flex; justify-content:flex-end;">
                         <button class="btn btn-blue" onclick="sendBroadcast('subtitle')">설정 (Set)</button>
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3 style="color:var(--melon);">💬 액션 바 (Actionbar)</h3>
                     <div style="margin-bottom:10px; color:#ddd; font-size:13px;">아이템 슬롯 위에 작게 뜨는 메시지입니다.</div>
@@ -901,24 +929,19 @@
             <div id="settings" class="content">
                 <div style="text-align:right; margin-bottom:10px;"><button class="btn btn-blue" onclick="saveSettings()"
                         style="padding:10px 20px;" data-i18n="btn_save_settings">💾 설정 저장하기</button></div>
-
                 <div class="setting-card" style="border-color:var(--melon);">
                     <h3 style="color:var(--melon)" data-i18n="title_backup">💾 백업 설정</h3>
                     <div class="setting-row">
-                        <div data-i18n="set_auto_backup">자동 백업 활성화</div>
-                        <label class="switch"><input type="checkbox" id="auto_backup"><span
-                                class="slider"></span></label>
+                        <div data-i18n="set_auto_backup">자동 백업 활성화</div><label class="switch"><input type="checkbox"
+                                id="auto_backup"><span class="slider"></span></label>
                     </div>
                     <div class="setting-row">
-                        <div data-i18n="set_backup_interval">백업 주기 (분)</div>
-                        <input type="number" id="backup_interval" class="input-num" value="60">
+                        <div data-i18n="set_backup_interval">백업 주기 (분)</div><input type="number" id="backup_interval"
+                            class="input-num" value="60">
                     </div>
-                    <div style="text-align:right; margin-top:10px;">
-                        <button class="btn btn-blue" onclick="triggerBackup()" data-i18n="btn_backup_now">지금
-                            백업하기</button>
-                    </div>
+                    <div style="text-align:right; margin-top:10px;"><button class="btn btn-blue"
+                            onclick="triggerBackup()" data-i18n="btn_backup_now">지금 백업하기</button></div>
                 </div>
-
                 <div class="setting-card" style="border-color:var(--accent-blue);">
                     <h3 style="color:var(--accent-blue)" data-i18n="title_java">☕ Java 설정</h3>
                     <div class="setting-row">
@@ -928,7 +951,6 @@
                     <p style="font-size:12px; color:#888; margin-top:5px;" data-i18n="msg_java_tip">* 1.18 이상은 Java 17+,
                         그 이하는 Java 8 권장</p>
                 </div>
-
                 <div class="setting-card">
                     <h3 style="color:var(--melon)" data-i18n="title_general">📝 일반 설정</h3>
                     <div class="setting-row">
@@ -959,7 +981,6 @@
                                 type="checkbox" id="enforce-whitelist"><span class="slider"></span></label>
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3 data-i18n="title_performance">🚀 성능 및 네트워크</h3>
                     <div class="setting-row"><span><span data-i18n="set_ram">메모리 할당</span>: <span id="ramVal"
@@ -1003,7 +1024,6 @@
                                 type="checkbox" id="broadcast-console-to-ops"><span class="slider"></span></label>
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3 data-i18n="title_world">🌍 월드 및 생성</h3>
                     <div class="setting-row">
@@ -1035,7 +1055,6 @@
                                 type="checkbox" id="generate-structures"><span class="slider"></span></label>
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3 data-i18n="title_gameplay">🎮 게임 플레이</h3>
                     <div class="setting-row">
@@ -1097,7 +1116,6 @@
                             id="player-idle-timeout" class="input-num">
                     </div>
                 </div>
-
                 <div class="setting-card">
                     <h3 data-i18n="title_security">🔒 보안 및 기타</h3>
                     <div class="setting-row">
@@ -1124,7 +1142,6 @@
                         <div data-i18n="set_require_resource_pack">리소스팩 강제</div><label class="switch"><input
                                 type="checkbox" id="require-resource-pack"><span class="slider"></span></label>
                     </div>
-
                     <div class="setting-row">
                         <div data-i18n="set_enable_rcon">RCON 활성화</div><label class="switch"><input type="checkbox"
                                 id="enable-rcon"><span class="slider"></span></label>
@@ -1137,7 +1154,6 @@
                         <div data-i18n="set_rcon_password">RCON 비밀번호</div><input type="text" id="rcon.password"
                             class="input-text">
                     </div>
-
                     <div class="setting-row">
                         <div data-i18n="set_enable_query">Query 활성화</div><label class="switch"><input type="checkbox"
                                 id="enable-query"><span class="slider"></span></label>
@@ -1146,7 +1162,6 @@
                         <div data-i18n="set_query_port">Query 포트</div><input type="number" id="query.port"
                             class="input-num">
                     </div>
-
                     <div class="setting-row">
                         <div data-i18n="set_sync_chunk_writes">청크 동기화 저장</div><label class="switch"><input
                                 type="checkbox" id="sync-chunk-writes"><span class="slider"></span></label>
@@ -1190,6 +1205,22 @@
                 </div>
             </div>
 
+            <div id="plugins" class="content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 style="color:var(--accent-orange)">🧩 플러그인 관리</h3>
+                    <button class="btn" style="background:var(--bg-card); border:1px solid #555;"
+                        onclick="refreshPluginList()">🔄 새로고침</button>
+                </div>
+                <p style="color:#888; font-size:13px; margin-top:-10px; margin-bottom:20px;">
+                    서버 폴더의 plugins 폴더에 있는 .jar 파일 목록입니다.<br>
+                    플러그인은 항상 서버 재시작 시 적용됩니다.
+                </p>
+
+                <div id="pluginList" class="list-box"
+                    style="height: 100%; background: transparent; border: none; overflow-y: auto;">
+                </div>
+            </div>
+
             <div id="danger" class="content">
                 <div class="setting-card" style="border-color:#888;">
                     <h3 style="color:#fff;">📂 파일 위치 확인</h3>
@@ -1201,7 +1232,6 @@
                             onclick="openFolder('backup')">💾 백업 폴더 열기</button>
                     </div>
                 </div>
-
                 <div class="setting-card"
                     style="border: 1px solid var(--accent-red); background: rgba(244, 67, 54, 0.05);">
                     <h3 style="color:var(--accent-red)" data-i18n="title_danger">🚫 서버 삭제 (Danger Zone)</h3>
@@ -1277,13 +1307,12 @@
                 </div>
                 <div class="action-grid">
                     <div class="act-btn" onclick="openWhisperModal()"
-                        style="border-color: var(--accent-blue); color: var(--accent-blue);">
-                        💬 귓속말 (Whisper)
-                    </div>
+                        style="border-color: var(--accent-blue); color: var(--accent-blue);">💬 귓속말 (Whisper)</div>
                     <div class="act-btn" onclick="openTpModal()"
-                        style="border-color: var(--melon); color: var(--melon);">
-                        🚀 이동 (TP)
-                    </div>
+                        style="border-color: var(--melon); color: var(--melon);">🚀 이동 (TP)</div>
+                    <div class="act-btn" onclick="openGamemodeModal()"
+                        style="grid-column: span 2; border-color: var(--accent-gold); color: var(--accent-gold);">🎮
+                        게임모드 변경 (Gamemode)</div>
                     <div class="act-btn" onclick="askAction('op', 'OP')" data-i18n="act_op">관리자 (OP)</div>
                     <div class="act-btn" onclick="askAction('deop', 'DEOP')" data-i18n="act_deop">권한 해제 (DEOP)</div>
                     <div class="act-btn danger" onclick="askAction('kick', 'KICK')" data-i18n="act_kick">추방 (KICK)</div>
@@ -1293,52 +1322,58 @@
             </div>
         </div>
     </div>
-
     <div id="whisperModal" class="modal-overlay">
         <div class="modal">
             <h3>💬 귓속말 보내기</h3>
             <p style="color:#aaa; font-size:13px; margin-bottom:10px;">To: <b id="whisperTarget" style="color:#fff"></b>
-            </p>
-            <input type="text" id="whisperInput" class="modal-input" placeholder="메시지 내용을 입력하세요..."
+            </p><input type="text" id="whisperInput" class="modal-input" placeholder="메시지 내용을 입력하세요..."
                 style="margin-bottom:20px;">
-            <div class="modal-btn-group">
-                <button class="btn" style="background:#333;" onclick="closeModal('whisperModal')">취소</button>
-                <button class="btn btn-blue" onclick="sendWhisperReal()">보내기</button>
-            </div>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('whisperModal')">취소</button><button class="btn btn-blue"
+                    onclick="sendWhisperReal()">보내기</button></div>
         </div>
     </div>
-
     <div id="tpModal" class="modal-overlay">
         <div class="modal" style="width:400px;">
             <h3 style="color:var(--melon);">🚀 텔레포트 (TP)</h3>
             <p style="color:#aaa; font-size:13px;">누구에게 이동하시겠습니까?</p>
-            <div id="tpList" class="list-box" style="height: 250px;">
-            </div>
-            <div class="modal-btn-group">
-                <button class="btn" style="background:#333;" onclick="closeModal('tpModal')">닫기</button>
-            </div>
+            <div id="tpList" class="list-box" style="height: 250px;"></div>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('tpModal')">닫기</button></div>
         </div>
     </div>
-
+    <div id="gamemodeModal" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color:var(--accent-gold);">🎮 게임모드 변경</h3>
+            <p style="color:#aaa; font-size:13px; margin-bottom:20px;">대상: <b id="gmTarget" style="color:#fff"></b></p>
+            <div class="env-grid">
+                <div class="env-btn" onclick="executeGamemode('survival')"><i class="ph ph-heart"></i><span>서바이벌</span>
+                </div>
+                <div class="env-btn" onclick="executeGamemode('creative')"><i class="ph ph-cube"></i><span>크리에이티브</span>
+                </div>
+                <div class="env-btn" onclick="executeGamemode('adventure')"><i
+                        class="ph ph-map-trifold"></i><span>모험</span></div>
+                <div class="env-btn" onclick="executeGamemode('spectator')"><i class="ph ph-eye"></i><span>관전자</span>
+                </div>
+            </div>
+            <div class="modal-btn-group" style="margin-top:20px;"><button class="btn" style="background:#333;"
+                    onclick="closeModal('gamemodeModal')">취소</button></div>
+        </div>
+    </div>
     <div id="banOptionModal" class="modal-overlay">
         <div class="modal">
             <h3 style="color:var(--accent-red);">🚫 차단 옵션 선택</h3>
             <p style="color:#ddd; margin-bottom:20px;">어떤 방식으로 차단하시겠습니까?</p>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <button class="btn"
+            <div style="display:flex; flex-direction:column; gap:10px;"><button class="btn"
                     style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
-                    onclick="executeBan('name')">닉네임 차단 (Name Ban)</button>
-                <button class="btn"
+                    onclick="executeBan('name')">닉네임 차단 (Name Ban)</button><button class="btn"
                     style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
-                    onclick="executeBan('ip')">IP 차단 (IP Ban)</button>
-                <button class="btn btn-red" onclick="executeBan('both')">둘 다 차단 (Both)</button>
-            </div>
-            <div class="modal-btn-group" style="margin-top:20px;">
-                <button class="btn" style="background:#333;" onclick="closeModal('banOptionModal')">취소</button>
-            </div>
+                    onclick="executeBan('ip')">IP 차단 (IP Ban)</button><button class="btn btn-red"
+                    onclick="executeBan('both')">둘 다 차단 (Both)</button></div>
+            <div class="modal-btn-group" style="margin-top:20px;"><button class="btn" style="background:#333;"
+                    onclick="closeModal('banOptionModal')">취소</button></div>
         </div>
     </div>
-
     <div id="actionConfirmModal" class="modal-overlay">
         <div class="modal">
             <h3 data-i18n="modal_confirm_title">⚠️ 실행 확인</h3>
@@ -1348,6 +1383,36 @@
                     class="btn btn-blue" onclick="confirmAction()" data-i18n="btn_confirm">확인</button></div>
         </div>
     </div>
+    <div id="stopConfirmModal" class="modal-overlay">
+        <div class="modal" style="border-color:var(--accent-red);">
+            <h3 style="color:var(--accent-red);">⚠️ 서버 종료 확인</h3>
+            <p style="color:#ddd; margin-bottom:20px;">정말 서버를 종료하시겠습니까?</p>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('stopConfirmModal')">취소</button><button class="btn btn-red"
+                    onclick="executeStop()">종료</button></div>
+        </div>
+    </div>
+    <div id="restartConfirmModal" class="modal-overlay">
+        <div class="modal" style="border-color:var(--accent-gold);">
+            <h3 style="color:var(--accent-gold);">🔄 서버 재시작 확인</h3>
+            <p style="color:#ddd; margin-bottom:20px;">정말 서버를 다시 시작하시겠습니까?<br>(종료 후 다시 시작됩니다)</p>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;"
+                    onclick="closeModal('restartConfirmModal')">취소</button><button class="btn btn-yellow"
+                    onclick="executeRestart()">재시작</button></div>
+        </div>
+    </div>
+    <div id="pluginDetailModal" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color:var(--accent-orange);">🧩 플러그인 관리</h3>
+            <p id="plDetailName" style="color:#fff; font-weight:bold; margin-bottom:20px;">Filename</p>
+            <p style="color:#aaa; font-size:13px; margin-bottom:20px;">이 플러그인을 서버에서 완전히 삭제하시겠습니까?<br>(복구할 수 없습니다)</p>
+            <div class="modal-btn-group">
+                <button class="btn" style="background:#333;" onclick="closeModal('pluginDetailModal')">취소</button>
+                <button class="btn btn-red" onclick="confirmDeletePlugin()">🗑️ 삭제 (Delete)</button>
+            </div>
+        </div>
+    </div>
+
     <div id="listManagerModal" class="modal-overlay">
         <div class="modal list-manager-modal" style="width: 400px;">
             <h3 id="listTitle" data-i18n="modal_list_title">목록 관리</h3>
@@ -1363,9 +1428,8 @@
     <div id="newServerModal" class="modal-overlay">
         <div class="modal">
             <h3 data-i18n="modal_new_title">✨ 새 서버 생성</h3><label class="modal-label" data-i18n="modal_new_name">서버
-                이름</label>
-            <input type="text" id="newServerName" class="modal-input" placeholder="MyServer"
-                oninput="this.value=this.value.replace(/[<>:&quot;/\\|?*]/g,'')"><label class="modal-label"
+                이름</label><input type="text" id="newServerName" class="modal-input" placeholder="MyServer"
+                oninput="cleanServerNameInput(this)"><label class="modal-label"
                 data-i18n="modal_new_ver">버전</label><select id="newServerVersion" class="modal-input">
                 <option value="">Loading...</option>
             </select>
@@ -1407,267 +1471,178 @@
     </div>
 
     <script>
-        let currentSelectedServerName = "";
-        let currentLang = "ko";
-        let currentTranslations = {};
-        let globalPlayerList = [];
-
-        window.onload = async function () {
-            await eel.init_system_py()();
-            await checkSystem();
-            await loadLauncherConfig();
-            refreshServerList();
-            loadVersionList();
-        };
-
-        async function tryCloseApp() {
-            const result = await eel.try_close_app_py()();
-
-            if (result === "blocked") {
-                const msg = currentTranslations["msg_cannot_close"] || "⚠️ Server is running!";
-                showToast(msg, "error");
-            } else {
-                window.close();
-            }
-        }
-
-        async function loadLauncherConfig() { const conf = await eel.get_launcher_config_py()(); if (conf) { if (conf.language) await changeLanguage(conf.language); if (conf.mirror_url) document.getElementById('mirrorUrlInput').value = conf.mirror_url; document.getElementById('langSelect').value = currentLang; } }
-        async function saveLauncherSettings() { const lang = document.getElementById('langSelect').value; const mirror = document.getElementById('mirrorUrlInput').value; const data = { "language": lang, "mirror_url": mirror }; await eel.save_launcher_config_py(data)(); showToast("Saved", "success"); closeModal('launcherSettingsModal'); }
-        async function changeLanguage(langCode) { currentLang = langCode; currentTranslations = await eel.get_translation_py(langCode)(); if (!currentTranslations) return; document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (currentTranslations[key]) { if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = currentTranslations[key]; } else { el.innerHTML = currentTranslations[key]; } } }); }
-        async function loadVersionList() { const select = document.getElementById('newServerVersion'); const versions = await eel.get_papermc_versions()(); if (versions && versions.length > 0) { select.innerHTML = ""; versions.forEach(v => { select.innerHTML += `<option value="${v}">${v}</option>`; }); } else { select.innerHTML = `<option value="1.21.1">1.21.1</option><option value="1.20.4">1.20.4</option>`; } }
+        let currentSelectedServerName = "", currentLang = "ko", currentTranslations = {}, globalPlayerList = [];
+        window.onload = async function () { await eel.init_system_py()(); await checkSystem(); await loadLauncherConfig(); refreshServerList(); loadVersionList(); };
+        async function tryCloseApp() { const r = await eel.try_close_app_py()(); if (r === "blocked") { showToast(currentTranslations["msg_cannot_close"] || "⚠️ Server is running!", "error"); } else { window.close(); } }
+        async function loadLauncherConfig() { const c = await eel.get_launcher_config_py()(); if (c) { if (c.language) await changeLanguage(c.language); if (c.mirror_url) document.getElementById('mirrorUrlInput').value = c.mirror_url; document.getElementById('langSelect').value = currentLang; } }
+        async function saveLauncherSettings() { const l = document.getElementById('langSelect').value; const m = document.getElementById('mirrorUrlInput').value; await eel.save_launcher_config_py({ "language": l, "mirror_url": m })(); showToast("Saved", "success"); closeModal('launcherSettingsModal'); }
+        async function changeLanguage(c) { currentLang = c; currentTranslations = await eel.get_translation_py(c)(); if (!currentTranslations) return; document.querySelectorAll('[data-i18n]').forEach(e => { const k = e.getAttribute('data-i18n'); if (currentTranslations[k]) { if (e.tagName === 'INPUT' || e.tagName === 'TEXTAREA') e.placeholder = currentTranslations[k]; else e.innerHTML = currentTranslations[k]; } }); }
+        async function loadVersionList() { const s = document.getElementById('newServerVersion'); const v = await eel.get_papermc_versions()(); if (v && v.length > 0) { s.innerHTML = ""; v.forEach(i => s.innerHTML += `<option value="${i}">${i}</option>`); } else { s.innerHTML = `<option value="1.21.1">1.21.1</option><option value="1.20.4">1.20.4</option>`; } }
         async function checkSystem() { await eel.check_java_status()(); }
-        async function refreshServerList() { let servers = await eel.get_server_list_py()(); let list = document.getElementById('sidebarList'); list.innerHTML = ""; servers.forEach(s => { const isActive = (s.name === currentSelectedServerName) ? "active" : ""; list.innerHTML += `<div class="server-item ${isActive}" onclick="selectServer('${s.name}', this)"><h4>${s.name}</h4><p><span style="color:${s.status === 'Running' ? 'var(--accent-green)' : '#777'}">${s.status}</span><span style="color:#666; margin-left:5px; font-size:11px;">${s.version}</span></p></div>`; }); }
-        async function selectServer(name, el) { currentSelectedServerName = name; document.getElementById('logs').innerHTML = ""; document.getElementById('emptyScreen').style.display = 'none'; document.getElementById('mainContent').classList.add('active'); document.querySelectorAll('.server-item').forEach(i => i.classList.remove('active')); if (el) el.classList.add('active'); document.getElementById('headerTitle').innerText = name; await eel.select_server_py(name)(); loadSettings(); }
-        async function createNewServer() { let name = document.getElementById('newServerName').value; let ver = document.getElementById('newServerVersion').value; let mirror = document.getElementById('mirrorUrlInput').value; let btn = document.getElementById('btnCreateReal'); if (!name) return showToast("Name required", "error"); btn.disabled = true; btn.innerText = "..."; let res = await eel.create_new_server_real(name, ver, mirror)(); btn.disabled = false; changeLanguage(currentLang); closeModal('newServerModal'); if (res.includes("✅")) { showToast("Success", "success"); refreshServerList(); } else showToast(res, "error"); }
+        async function refreshServerList() { let s = await eel.get_server_list_py()(); let l = document.getElementById('sidebarList'); l.innerHTML = ""; s.forEach(i => { const a = (i.name === currentSelectedServerName) ? "active" : ""; l.innerHTML += `<div class="server-item ${a}" onclick="selectServer('${i.name}', this)"><h4>${i.name}</h4><p><span style="color:${i.status === 'Running' ? 'var(--accent-green)' : '#777'}">${i.status}</span><span style="color:#666; margin-left:5px; font-size:11px;">${i.version}</span></p></div>`; }); }
+        async function selectServer(n, e) { currentSelectedServerName = n; document.getElementById('logs').innerHTML = ""; document.getElementById('emptyScreen').style.display = 'none'; document.getElementById('mainContent').classList.add('active'); document.querySelectorAll('.server-item').forEach(i => i.classList.remove('active')); if (e) e.classList.add('active'); document.getElementById('headerTitle').innerText = n; await eel.select_server_py(n)(); loadSettings(); }
+        async function createNewServer() { let n = document.getElementById('newServerName').value; let v = document.getElementById('newServerVersion').value; let m = document.getElementById('mirrorUrlInput').value; let b = document.getElementById('btnCreateReal'); if (!n) return showToast("Name required", "error"); b.disabled = true; b.innerText = "..."; let r = await eel.create_new_server_real(n, v, m)(); b.disabled = false; changeLanguage(currentLang); closeModal('newServerModal'); if (r.includes("✅")) { showToast("Success", "success"); refreshServerList(); } else showToast(r, "error"); }
         let serverToDelete = "";
-        function askDeleteServer() { let name = document.getElementById('headerTitle').innerText; serverToDelete = name; document.getElementById('delTargetName').innerText = name; openModal('deleteConfirmModal'); }
-        async function confirmDeleteProcess() { closeModal('deleteConfirmModal'); let res = await eel.delete_server_real(serverToDelete)(); if (res.includes("✅")) { showToast("Deleted", "success"); document.getElementById('emptyScreen').style.display = 'flex'; document.getElementById('mainContent').classList.remove('active'); refreshServerList(); } else { showToast(res, "error"); } }
+        function askDeleteServer() { let n = document.getElementById('headerTitle').innerText; serverToDelete = n; document.getElementById('delTargetName').innerText = n; openModal('deleteConfirmModal'); }
+        async function confirmDeleteProcess() { closeModal('deleteConfirmModal'); let r = await eel.delete_server_real(serverToDelete)(); if (r.includes("✅")) { showToast("Deleted", "success"); document.getElementById('emptyScreen').style.display = 'flex'; document.getElementById('mainContent').classList.remove('active'); refreshServerList(); } else { showToast(r, "error"); } }
         const checkboxSettings = ['allow-flight', 'allow-nether', 'broadcast-console-to-ops', 'broadcast-rcon-to-ops', 'debug', 'enable-command-block', 'enable-jmx-monitoring', 'enable-query', 'enable-rcon', 'enable-status', 'enforce-secure-profile', 'enforce-whitelist', 'force-gamemode', 'generate-structures', 'hardcore', 'hide-online-players', 'log-ips', 'online-mode', 'prevent-proxy-connections', 'pvp', 'require-resource-pack', 'spawn-animals', 'spawn-monsters', 'spawn-npcs', 'sync-chunk-writes', 'use-native-transport', 'white-list', 'accepts-transfers', 'auto_backup'];
         const textSettings = ['java_path', 'motd', 'max-players', 'server-port', 'server-ip', 'view-distance', 'simulation-distance', 'max-tick-time', 'network-compression-threshold', 'rate-limit', 'max-world-size', 'level-name', 'level-seed', 'level-type', 'generator-settings', 'gamemode', 'difficulty', 'spawn-protection', 'player-idle-timeout', 'op-permission-level', 'resource-pack', 'rcon.port', 'rcon.password', 'query.port', 'entity-broadcast-range-percentage', 'max-chained-neighbor-updates', 'region-file-compression', 'bug-report-link', 'initial-enabled-packs', 'initial-disabled-packs', 'backup_interval'];
-        async function loadSettings() { let props = await eel.load_properties_py()(); if (!props) return; checkboxSettings.forEach(id => { const el = document.getElementById(id); if (el) el.checked = (props[id] === 'true' || props[id] === true); }); textSettings.forEach(id => { const el = document.getElementById(id); if (el && props[id]) el.value = String(props[id]).replace(/\\:/g, ":"); }); const javaEl = document.getElementById('java_path'); if (props['java_path']) javaEl.value = props['java_path']; else javaEl.value = "java"; }
-        async function saveSettings() { let data = {}; checkboxSettings.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.checked; }); textSettings.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.value; }); let res = await eel.save_properties_py(data)(); showToast("Saved", "success"); }
+        async function loadSettings() { let p = await eel.load_properties_py()(); if (!p) return; checkboxSettings.forEach(i => { const e = document.getElementById(i); if (e) e.checked = (p[i] === 'true' || p[i] === true); }); textSettings.forEach(i => { const e = document.getElementById(i); if (e && p[i]) e.value = String(p[i]).replace(/\\:/g, ":"); }); const j = document.getElementById('java_path'); if (p['java_path']) j.value = p['java_path']; else j.value = "java"; }
+        async function saveSettings() { let d = {}; checkboxSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.checked; }); textSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.value; }); await eel.save_properties_py(d)(); showToast("Saved", "success"); }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(() => document.getElementById(id).classList.add('show'), 10); }
         function closeModal(id) { document.getElementById(id).classList.remove('show'); setTimeout(() => document.getElementById(id).style.display = 'none', 300); }
-        function updateRamLabel(val) { document.getElementById('ramVal').innerText = val + " GB"; document.getElementById('ramDisplay').innerText = val + " GB"; }
-        async function startServer() { let ram = document.getElementById('ramSlider').value; document.getElementById('btnStart').classList.add('hidden'); document.getElementById('btnStop').classList.remove('hidden'); document.getElementById('statusText').innerText = "LOADING..."; showToast("Starting...", "info"); let res = await eel.start_server_py(ram)(); if (res.includes("❌") || res.includes("⚠️")) { showToast(res, "error"); update_status_js(false); } else setTimeout(refreshServerList, 1000); }
-        function switchTab(id, btn) { document.querySelectorAll('.content').forEach(e => e.classList.remove('active')); document.querySelectorAll('.tab').forEach(e => e.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); if (id === 'settings') loadSettings(); }
-        function switchTab(id, btn) { document.querySelectorAll('.content').forEach(e => e.classList.remove('active')); document.querySelectorAll('.tab').forEach(e => e.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); if (id === 'settings') loadSettings(); }
-        function sendCommand(cmd) { eel.send_command_py(cmd); }
+        function updateRamLabel(v) { document.getElementById('ramVal').innerText = v + " GB"; document.getElementById('ramDisplay').innerText = v + " GB"; }
+
+        async function startServer() {
+            let ram = document.getElementById('ramSlider').value;
+            document.getElementById('btnStart').classList.add('hidden');
+            document.getElementById('btnStop').classList.remove('hidden');
+            document.getElementById('btnRestart').classList.remove('hidden');
+            document.getElementById('statusText').innerText = "LOADING...";
+            showToast("Starting...", "info");
+
+            if (eel.get_public_ip_py) {
+                document.getElementById('publicIp').innerText = "Checking...";
+                let ip = await eel.get_public_ip_py()();
+                document.getElementById('publicIp').innerText = ip;
+            }
+
+            let r = await eel.start_server_py(ram)();
+            if (r.includes("❌") || r.includes("⚠️")) { showToast(r, "error"); update_status_js(false); }
+            else setTimeout(refreshServerList, 1000);
+        }
+
+        function switchTab(id, btn) {
+            document.querySelectorAll('.content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); btn.classList.add('active');
+            if (id === 'settings') loadSettings();
+            // [추가됨] 플러그인 탭 누르면 리스트 새로고침
+            if (id === 'plugins') refreshPluginList();
+        }
+
+        function sendCommand(c) { eel.send_command_py(c); }
         document.getElementById('cmdInput').addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.target.value.trim() !== "") { sendCommand(e.target.value); e.target.value = ""; } });
-        async function triggerBackup() { if (!currentSelectedServerName) return; const res = await eel.trigger_backup_py(currentSelectedServerName)(); showToast("Backup Started", "info"); }
+        async function triggerBackup() { if (!currentSelectedServerName) return; await eel.trigger_backup_py(currentSelectedServerName)(); showToast("Backup Started", "info"); }
         eel.expose(update_player_list_js);
-        function update_player_list_js(players) {
-            globalPlayerList = players;
-            const listEl = document.getElementById('playerList'); listEl.innerHTML = ""; if (document.getElementById('playerCount')) document.getElementById('playerCount').innerText = players.length; if (players.length === 0) { const msg = currentTranslations["msg_no_players"] || "No players."; listEl.innerHTML = `<div class="empty-msg" style="text-align:center;color:#666;">${msg}</div>`; return; } players.forEach(name => { listEl.innerHTML += `<div class="player-card" onclick="openPlayerDetail('${name}')"><div class="p-info"><div class="avatar" style="background:#444;"></div><div style="font-weight:bold;">${name}</div></div><div style="font-size:12px; color:var(--accent-green);">● Online</div></div>`; });
-        }
+        function update_player_list_js(p) { globalPlayerList = p; const l = document.getElementById('playerList'); l.innerHTML = ""; if (document.getElementById('playerCount')) document.getElementById('playerCount').innerText = p.length; if (p.length === 0) { l.innerHTML = `<div class="empty-msg" style="text-align:center;color:#666;">${currentTranslations["msg_no_players"] || "No players."}</div>`; return; } p.forEach(n => { l.innerHTML += `<div class="player-card" onclick="openPlayerDetail('${n}')"><div class="p-info"><div class="avatar" style="background:#444;"></div><div style="font-weight:bold;">${n}</div></div><div style="font-size:12px; color:var(--accent-green);">● Online</div></div>`; }); }
         let currentDetailPlayer = "";
-        async function openPlayerDetail(name) { currentDetailPlayer = name; document.getElementById('pDetailName').innerText = name; document.getElementById('pDetailJoin').innerText = "..."; document.getElementById('pDetailUUID').innerText = "..."; openModal('playerDetailModal'); const info = await eel.get_player_detail_py(name)(); if (info) { document.getElementById('pDetailJoin').innerText = info.join_time; document.getElementById('pDetailUUID').innerText = "UUID: " + info.uuid; } }
+        async function openPlayerDetail(n) { currentDetailPlayer = n; document.getElementById('pDetailName').innerText = n; document.getElementById('pDetailJoin').innerText = "..."; document.getElementById('pDetailUUID').innerText = "..."; openModal('playerDetailModal'); const i = await eel.get_player_detail_py(n)(); if (i) { document.getElementById('pDetailJoin').innerText = i.join_time; document.getElementById('pDetailUUID').innerText = "UUID: " + i.uuid; } }
         let pendingAction = null; let pendingTarget = "";
-        function askAction(action, desc) { pendingAction = action; pendingTarget = currentDetailPlayer; const t = currentTranslations; document.getElementById('actionConfirmText').innerHTML = `${t.modal_del_msg} <b style="color:white">${pendingTarget}</b><br>Action: <b>${desc}</b>`; openModal('actionConfirmModal'); }
-
-        async function confirmAction() {
-            closeModal('actionConfirmModal');
-            if (!pendingAction || !pendingTarget) return;
-            let cmd = "";
-            if (pendingAction === 'op') cmd = `op ${pendingTarget}`;
-            else if (pendingAction === 'deop') cmd = `deop ${pendingTarget}`;
-            else if (pendingAction === 'kick') cmd = `kick ${pendingTarget} Kicked by Operator`;
-            else if (pendingAction === 'ban') cmd = `ban ${pendingTarget} Banned by Operator`;
-
-            if (cmd) { await eel.execute_command_py(cmd)(); showToast("Command Sent", "success"); if (pendingAction === 'kick' || pendingAction === 'ban') closeModal('playerDetailModal'); }
-            pendingAction = null;
-        }
-
+        function askAction(a, d) { pendingAction = a; pendingTarget = currentDetailPlayer; document.getElementById('actionConfirmText').innerHTML = `${currentTranslations.modal_del_msg} <b style="color:white">${pendingTarget}</b><br>Action: <b>${d}</b>`; openModal('actionConfirmModal'); }
+        async function confirmAction() { closeModal('actionConfirmModal'); if (!pendingAction || !pendingTarget) return; let c = ""; if (pendingAction === 'op') c = `op ${pendingTarget}`; else if (pendingAction === 'deop') c = `deop ${pendingTarget}`; else if (pendingAction === 'kick') c = `kick ${pendingTarget} Kicked`; else if (pendingAction === 'ban') c = `ban ${pendingTarget} Banned`; if (c) { await eel.execute_command_py(c)(); showToast("Command Sent", "success"); if (pendingAction === 'kick' || pendingAction === 'ban') closeModal('playerDetailModal'); } pendingAction = null; }
         let currentListType = "";
-        async function openListManager(type) {
-            currentListType = type;
-            const t = currentTranslations;
-            // [수정됨] 타입에 따라 제목 변경
-            if (type === 'whitelist') document.getElementById('listTitle').innerText = t.btn_whitelist;
-            else if (type === 'banlist') document.getElementById('listTitle').innerText = t.btn_banlist;
-            else document.getElementById('listTitle').innerText = "IP 차단 관리";
-
-            document.getElementById('listInput').value = "";
-            openModal('listManagerModal');
-            await refreshListManager();
+        async function openListManager(t) { currentListType = t; const tr = currentTranslations; if (t === 'whitelist') document.getElementById('listTitle').innerText = tr.btn_whitelist; else if (t === 'banlist') document.getElementById('listTitle').innerText = tr.btn_banlist; else document.getElementById('listTitle').innerText = "IP 차단 관리"; document.getElementById('listInput').value = ""; openModal('listManagerModal'); await refreshListManager(); }
+        async function refreshListManager() { const c = document.getElementById('listContainer'); c.innerHTML = "..."; const l = await eel.get_manage_list_py(currentListType)(); c.innerHTML = ""; if (l.length === 0) { c.innerHTML = "<div style='color:#666; text-align:center; padding:20px;'>Empty</div>"; return; } const tr = currentTranslations; const b = tr.btn_delete || "Delete"; l.forEach(n => { let ct = 'remove'; if (currentListType === 'banlist') ct = 'pardon'; else if (currentListType === 'ip-banlist') ct = 'pardon-ip'; const d = document.createElement('div'); d.className = 'list-item'; d.innerHTML = `<span>${n}</span> <button class="list-btn-s" onclick="modifyList('${ct}', '${n}')">${b}</button>`; c.appendChild(d); }); }
+        async function addItemToList() { const n = document.getElementById('listInput').value; if (!n) return; let c = ""; if (currentListType === 'whitelist') c = `whitelist add ${n}`; else if (currentListType === 'banlist') c = `ban ${n}`; else if (currentListType === 'ip-banlist') c = `ban-ip ${n}`; eel.send_command_py(c); document.getElementById('listInput').value = ""; showToast("Added", "info"); setTimeout(refreshListManager, 1000); }
+        async function modifyList(a, n) { let c = ""; if (a === 'remove') c = `whitelist remove ${n}`; else if (a === 'pardon') c = `pardon ${n}`; else if (a === 'pardon-ip') c = `pardon-ip ${n}`; eel.send_command_py(c); showToast("Removed", "info"); setTimeout(refreshListManager, 1000); }
+        eel.expose(update_status_js);
+        function update_status_js(isOn) {
+            if (isOn) {
+                document.getElementById('statusText').innerText = "ONLINE"; document.getElementById('statusSimple').innerText = "Running"; document.getElementById('statusSimple').style.color = "#2ba640";
+                document.getElementById('btnStart').classList.add('hidden'); document.getElementById('btnStop').classList.remove('hidden'); document.getElementById('btnRestart').classList.remove('hidden');
+                if (eel.get_public_ip_py) eel.get_public_ip_py()().then(ip => document.getElementById('publicIp').innerText = ip);
+            } else {
+                document.getElementById('statusText').innerText = "OFFLINE"; document.getElementById('statusSimple').innerText = "Stopped"; document.getElementById('statusSimple').style.color = "#fff";
+                document.getElementById('btnStart').classList.remove('hidden'); document.getElementById('btnStop').classList.add('hidden'); document.getElementById('btnRestart').classList.add('hidden');
+            }
+            refreshServerList();
         }
+        eel.expose(add_log_js);
+        function add_log_js(m) { const l = document.getElementById('logs'); l.innerHTML += `<div>${m}</div>`; l.scrollTop = l.scrollHeight; }
+        eel.expose(restore_logs_js);
+        function restore_logs_js(arr) { const l = document.getElementById('logs'); l.innerHTML = ""; arr.forEach(m => l.innerHTML += `<div>${m}</div>`); l.scrollTop = l.scrollHeight; }
+        eel.expose(showToast);
+        function showToast(m, t = 'info') { const c = document.getElementById('toast-container'); const e = document.createElement('div'); e.className = `toast ${t}`; e.innerText = m; c.appendChild(e); setTimeout(() => e.remove(), 3000); }
+        eel.expose(update_cpu_usage_js);
+        function update_cpu_usage_js(p) { const e = document.getElementById('sysCpu'); if (e) e.innerText = p + "%"; }
+        eel.expose(update_download_progress_js);
+        function update_download_progress_js(t) { const b = document.getElementById('btnCreateReal'); if (b) b.innerText = t.includes('%') ? `... ${t}%` : t; }
+        function openWhisperModal() { document.getElementById('whisperTarget').innerText = currentDetailPlayer; document.getElementById('whisperInput').value = ""; openModal('whisperModal'); }
+        function sendWhisperReal() { let m = document.getElementById('whisperInput').value; if (!m) return showToast("내용 입력", "error"); eel.send_command_py(`tell ${currentDetailPlayer} ${m}`); showToast("전송 완료", "success"); closeModal('whisperModal'); }
+        function sendBroadcast(t) { let m = "", c = ""; if (t === 'title') { m = document.getElementById('bcTitleInput').value; c = `title @a title "${m}"`; } else if (t === 'subtitle') { m = document.getElementById('bcSubtitleInput').value; c = `title @a subtitle "${m}"`; } else if (t === 'actionbar') { m = document.getElementById('bcActionbarInput').value; c = `title @a actionbar "${m}"`; } else if (t === 'title_clear') { c = `title @a clear`; document.getElementById('bcTitleInput').value = ""; } if (c) eel.send_command_py(c); showToast("전송/설정 완료", "success"); }
+        async function openFolder(t) { if (!currentSelectedServerName) return; await eel.open_folder_py(currentSelectedServerName, t)(); showToast("폴더 열림", "success"); }
+        function openTpModal() { const t = globalPlayerList.filter(p => p !== currentDetailPlayer); const c = document.getElementById('tpList'); c.innerHTML = ""; if (t.length === 0) { c.innerHTML = "<div style='text-align:center; color:#666;'>없음</div>"; } else { t.forEach(n => { c.innerHTML += `<div class="list-item"><span>${n}</span> <button class="list-btn-s" onclick="teleportTo('${n}')">이동</button></div>`; }); } openModal('tpModal'); }
+        function teleportTo(t) { eel.send_command_py(`tp ${currentDetailPlayer} ${t}`); showToast("이동함", "success"); closeModal('tpModal'); }
+        function openBanOptionModal() { closeModal('playerDetailModal'); openModal('banOptionModal'); }
+        async function executeBan(t) { let c = ""; const tg = currentDetailPlayer; if (t === 'name') c = `ban ${tg} Banned`; else if (t === 'ip') c = `ban-ip ${tg} IP Banned`; else if (t === 'both') { await eel.execute_command_py(`ban ${tg}`); await eel.execute_command_py(`ban-ip ${tg}`); closeModal('banOptionModal'); return; } if (c) eel.execute_command_py(c); closeModal('banOptionModal'); }
+        function openGamemodeModal() { document.getElementById('gmTarget').innerText = currentDetailPlayer; openModal('gamemodeModal'); }
+        function executeGamemode(m) { eel.send_command_py(`gamemode ${m} ${currentDetailPlayer}`); closeModal('gamemodeModal'); }
+        function cleanServerNameInput(i) { i.value = i.value.replace(/[<>:"/\\|?*]/g, ''); }
+        function askStop() { openModal('stopConfirmModal'); }
+        function executeStop() { sendCommand('stop'); closeModal('stopConfirmModal'); }
+        function askRestart() { openModal('restartConfirmModal'); }
+        function executeRestart() { sendCommand('stop'); showToast("Restarting...", "info"); closeModal('restartConfirmModal'); setTimeout(() => startServer(), 5000); }
 
-        async function refreshListManager() {
-            const container = document.getElementById('listContainer');
+        // [추가됨] 플러그인 관련 함수들
+        async function refreshPluginList() {
+            const container = document.getElementById('pluginList');
             container.innerHTML = "...";
-            const list = await eel.get_manage_list_py(currentListType)();
+            const list = await eel.get_plugin_list_py()();
             container.innerHTML = "";
-            if (list.length === 0) { container.innerHTML = "<div style='color:#666; text-align:center; padding:20px;'>Empty</div>"; return; }
-            const t = currentTranslations;
-            const btnRemove = t.btn_delete || "Delete";
-            list.forEach(name => {
-                // [수정됨] 타입별 삭제 버튼 액션 분기
-                let cmdType = 'remove';
-                if (currentListType === 'banlist') cmdType = 'pardon';
-                else if (currentListType === 'ip-banlist') cmdType = 'pardon-ip';
 
+            if (list.length === 0) {
+                container.innerHTML = "<div style='text-align:center; color:#666; padding:20px;'>No plugins found.</div>";
+                return;
+            }
+
+            list.forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `<span>${name}</span> <button class="list-btn-s" onclick="modifyList('${cmdType}', '${name}')">${btnRemove}</button>`;
+                div.className = 'plugin-item';
+
+                // 이름 클릭 시 상세(삭제) 팝업
+                const infoArea = document.createElement('div');
+                infoArea.className = 'plugin-info-area';
+                infoArea.onclick = () => openPluginDetail(p.filename);
+                infoArea.innerHTML = `<i class="ph ph-plug" style="color:var(--accent-orange); font-size:20px;"></i> <span>${p.name}</span>`;
+
+                // 토글 스위치
+                const switchLabel = document.createElement('label');
+                switchLabel.className = 'switch';
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.checked = p.enabled;
+                input.onchange = () => togglePlugin(p.filename, input.checked);
+
+                const slider = document.createElement('span');
+                slider.className = 'slider';
+
+                switchLabel.appendChild(input);
+                switchLabel.appendChild(slider);
+
+                div.appendChild(infoArea);
+                div.appendChild(switchLabel);
                 container.appendChild(div);
             });
         }
 
-        async function addItemToList() {
-            const name = document.getElementById('listInput').value;
-            if (!name) return;
-            // [수정됨] 타입별 추가 명령어 분기
-            let cmd = "";
-            if (currentListType === 'whitelist') cmd = `whitelist add ${name}`;
-            else if (currentListType === 'banlist') cmd = `ban ${name}`;
-            else if (currentListType === 'ip-banlist') cmd = `ban-ip ${name}`;
-
-            eel.send_command_py(cmd);
-            document.getElementById('listInput').value = "";
-            showToast("Added (wait...)", "info");
-            setTimeout(refreshListManager, 1000);
-        }
-
-        async function modifyList(action, name) {
-            let cmd = "";
-            // [수정됨] 삭제 명령어 분기
-            if (action === 'remove') cmd = `whitelist remove ${name}`;
-            else if (action === 'pardon') cmd = `pardon ${name}`;
-            else if (action === 'pardon-ip') cmd = `pardon-ip ${name}`;
-
-            eel.send_command_py(cmd);
-            showToast("Removed", "info");
-            setTimeout(refreshListManager, 1000);
-        }
-
-        eel.expose(update_status_js);
-        function update_status_js(isOn) { if (isOn) { document.getElementById('statusText').innerText = "ONLINE"; document.getElementById('statusSimple').innerText = "Running"; document.getElementById('statusSimple').style.color = "#2ba640"; document.getElementById('btnStart').classList.add('hidden'); document.getElementById('btnStop').classList.remove('hidden'); } else { document.getElementById('statusText').innerText = "OFFLINE"; document.getElementById('statusSimple').innerText = "Stopped"; document.getElementById('statusSimple').style.color = "#fff"; document.getElementById('btnStart').classList.remove('hidden'); document.getElementById('btnStop').classList.add('hidden'); } refreshServerList(); }
-        eel.expose(add_log_js);
-        function add_log_js(msg) { const l = document.getElementById('logs'); l.innerHTML += `<div>${msg}</div>`; l.scrollTop = l.scrollHeight; }
-        eel.expose(restore_logs_js);
-        function restore_logs_js(arr) { const l = document.getElementById('logs'); l.innerHTML = ""; arr.forEach(m => l.innerHTML += `<div>${m}</div>`); l.scrollTop = l.scrollHeight; }
-        eel.expose(showToast);
-        function showToast(msg, type = 'info') { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast ${type}`; t.innerText = msg; c.appendChild(t); setTimeout(() => t.remove(), 3000); }
-        eel.expose(update_cpu_usage_js);
-        function update_cpu_usage_js(percent) { const cpuEl = document.getElementById('sysCpu'); if (cpuEl) cpuEl.innerText = percent + "%"; }
-        eel.expose(update_download_progress_js);
-        function update_download_progress_js(txt) { const btn = document.getElementById('btnCreateReal'); if (btn) btn.innerText = txt.includes('%') ? `... ${txt}%` : txt; }
-
-        function openWhisperModal() {
-            document.getElementById('whisperTarget').innerText = currentDetailPlayer;
-            document.getElementById('whisperInput').value = "";
-            openModal('whisperModal');
-        }
-
-        function sendWhisperReal() {
-            let msg = document.getElementById('whisperInput').value;
-            if (!msg) return showToast("내용을 입력하세요", "error");
-            let cmd = `tell ${currentDetailPlayer} ${msg}`;
-            eel.send_command_py(cmd);
-            showToast("귓속말 전송 완료", "success");
-            closeModal('whisperModal');
-        }
-
-        function sendBroadcast(type) {
-            let msg = "";
-            let cmd = "";
-
-            if (type === 'title') {
-                msg = document.getElementById('bcTitleInput').value;
-                if (!msg) return showToast("타이틀 내용을 입력하세요", "error");
-                cmd = `title @a title "${msg}"`;
-            }
-            else if (type === 'subtitle') {
-                msg = document.getElementById('bcSubtitleInput').value;
-                if (!msg) return showToast("서브 타이틀 내용을 입력하세요", "error");
-                cmd = `title @a subtitle "${msg}"`;
-                showToast("서브 타이틀 설정됨 (타이틀을 보내면 같이 뜹니다)", "info");
-            }
-            else if (type === 'actionbar') {
-                msg = document.getElementById('bcActionbarInput').value;
-                if (!msg) return showToast("액션 바 내용을 입력하세요", "error");
-                cmd = `title @a actionbar "${msg}"`;
-            }
-            else if (type === 'title_clear') {
-                cmd = `title @a clear`;
-                document.getElementById('bcTitleInput').value = "";
-                document.getElementById('bcSubtitleInput').value = "";
-                showToast("타이틀 초기화", "info");
-            }
-
-            if (cmd) {
-                eel.send_command_py(cmd);
-                if (type !== 'subtitle' && type !== 'title_clear') {
-                    showToast("메시지 전송 완료", "success");
-                }
-            }
-        }
-
-        async function openFolder(type) {
-            if (!currentSelectedServerName) return showToast("서버를 선택하세요", "error");
-            const res = await eel.open_folder_py(currentSelectedServerName, type)();
-            if (res.includes("✅")) showToast("폴더가 열렸습니다", "success");
-            else showToast(res, "error");
-        }
-
-        function openTpModal() {
-            const targets = globalPlayerList.filter(p => p !== currentDetailPlayer);
-            const container = document.getElementById('tpList');
-            container.innerHTML = "";
-
-            if (targets.length === 0) {
-                container.innerHTML = "<div style='text-align:center; color:#666; margin-top:20px;'>이동할 상대가 없습니다.</div>";
+        async function togglePlugin(filename, isChecked) {
+            const res = await eel.toggle_plugin_py(filename, isChecked)();
+            if (res.includes("✅")) {
+                showToast(res, "success");
+                refreshPluginList(); // 리스트 갱신 (이름 바뀜 등 반영)
             } else {
-                targets.forEach(target => {
-                    const btn = document.createElement('div');
-                    btn.className = 'list-item';
-                    btn.style.cursor = 'pointer';
-                    btn.innerHTML = `<span style='font-weight:bold;'>${target}</span> <button class='list-btn-s' style='border-color:var(--melon); color:var(--melon);' onclick='teleportTo("${target}")'>이동</button>`;
-                    container.appendChild(btn);
-                });
+                showToast(res, "error");
+                refreshPluginList(); // 실패 시 원복
             }
-            openModal('tpModal');
         }
 
-        function teleportTo(targetName) {
-            const cmd = `tp ${currentDetailPlayer} ${targetName}`;
-            eel.send_command_py(cmd);
-            showToast(`${targetName}에게 이동합니다`, "success");
-            closeModal('tpModal');
+        let currentPluginFile = "";
+        function openPluginDetail(filename) {
+            currentPluginFile = filename;
+            document.getElementById('plDetailName').innerText = filename;
+            openModal('pluginDetailModal');
         }
 
-        // [추가됨] 차단 옵션 팝업 열기
-        function openBanOptionModal() {
-            closeModal('playerDetailModal'); // 상세 창 닫고
-            openModal('banOptionModal');     // 옵션 창 열기
-        }
-
-        // [추가됨] 차단 실행 함수
-        async function executeBan(type) {
-            let cmd = "";
-            const target = currentDetailPlayer;
-
-            if (type === 'name') {
-                cmd = `ban ${target} Banned by Operator`;
-                showToast("닉네임 차단 실행", "info");
-            } else if (type === 'ip') {
-                // ban-ip 플레이어이름 -> 자동으로 IP 찾아서 차단함
-                cmd = `ban-ip ${target} IP Banned by Operator`;
-                showToast("IP 차단 실행", "info");
-            } else if (type === 'both') {
-                // 둘 다 실행
-                await eel.execute_command_py(`ban ${target} Banned`);
-                await eel.execute_command_py(`ban-ip ${target} IP Banned`);
-                showToast("닉네임 및 IP 차단 실행", "success");
-                closeModal('banOptionModal');
-                return;
+        async function confirmDeletePlugin() {
+            closeModal('pluginDetailModal');
+            const res = await eel.delete_plugin_py(currentPluginFile)();
+            if (res.includes("✅")) {
+                showToast("Plugin Deleted", "success");
+                refreshPluginList();
+            } else {
+                showToast(res, "error");
             }
-
-            if (cmd) {
-                await eel.execute_command_py(cmd);
-                showToast("명령어 전송 완료", "success");
-            }
-            closeModal('banOptionModal');
         }
     </script>
 </body>
