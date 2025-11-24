@@ -15,6 +15,8 @@ It automatically fetches the latest server core through the PaperMC API, and its
 
 ✔️ Python backend + HTML frontend structure
 
+✔️Web-based UI
+
 
 <img width="1386" height="810" alt="스크린샷 2025-11-23 193858" src="https://github.com/user-attachments/assets/7ffcff58-54e5-4114-921c-e6a18e035c66" />
 
