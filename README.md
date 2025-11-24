@@ -1,4 +1,4 @@
-한국어 사용자는 https://github.com/GNBD/NENE-Helper-KO 로 이동하십시오.
+한국어 사용자는 https://github.com/GNBD/NENE-Helper-kr 로 이동하십시오.
 -----------------------------------------------------
 🚀 Project Overview
 
