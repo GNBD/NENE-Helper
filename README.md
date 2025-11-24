@@ -1,61 +1,86 @@
-한국어 사용자는 https://github.com/GNBD/NENE-Helper-kr 로 이동하십시오.
------------------------------------------------------
-🚀 Project Overview
+# NENE HELPER 🐔
 
-NENE HELPER is a tool designed to help you set up a Minecraft Java Edition server quickly and easily.
-It automatically fetches the latest server core through the PaperMC API, and its user interface is built using HTML/CSS.
+> **The easiest and most lightweight tool to manage your Minecraft Java Edition server.**
 
+한국어 사용자는 [여기(Click)](https://github.com/GNBD/NENE-Helper-kr)로 이동하십시오.
 
+---
 
-✔️ One-click PaperMC server creation
+## 🚀 Project Overview
 
-✔️ Automatic latest-version downloads via API
+**NENE HELPER** is a powerful tool designed to help anyone set up and manage a Minecraft Java Edition server quickly and easily.
+It automatically fetches the latest server core through the PaperMC API (or custom API), and provides a user-friendly Web GUI built with Python and HTML/CSS.
 
-✔️ Simple and lightweight UI
+No complex commands are needed. Just click, and your server is ready.
 
-✔️ Python backend + HTML frontend structure
+![스크린샷 2025-11-23 193858](https://github.com/user-attachments/assets/7ffcff58-54e5-4114-921c-e6a18e035c66)
 
-✔️Web-based UI
+👉 **Official Website:** [https://nenehelper.netlify.app/](https://nenehelper.netlify.app/)
 
+---
 
-<img width="1386" height="810" alt="스크린샷 2025-11-23 193858" src="https://github.com/user-attachments/assets/7ffcff58-54e5-4114-921c-e6a18e035c66" />
+## ✨ Key Features
 
+### ⚡ **Server Management**
+* **One-click Creation:** Download the latest PaperMC core and set up a server in seconds.
+* **Easy Java Switching:** Automatically detects all installed Java versions on your PC. You can switch between versions (e.g., Java 8 ↔ Java 21) with a single click.
+* **Per-Server Settings:** Apply different Java versions to different servers effortlessly.
+* **Manual Path Support:** You can also manually specify a custom Java path if needed.
+* **Custom API Support:** You can change the server core download URL (API) if needed.
 
+### 📊 **Dashboard & Monitoring**
+* **Real-time Monitoring:** Check server status, CPU, and RAM usage at a glance.
+* **Web-based UI:** Clean and responsive interface using HTML/CSS.
 
-https://nenehelper.netlify.app/
+### 🛠 **Essential Admin Tools**
+* **One-Click Commands:** Execute essential commands instantly without typing:
+    * 🌦️ **Weather & Time:** Clear weather, Day/Night toggle.
+    * ⚙️ **Game Settings:** Change Difficulty, Gamemode.
+    * 📢 **Broadcasting:** Simple Announcement feature / Whisper.
+    * 🛡️ **Player Management:** OP/Deop, Kick, Ban users easily.
 
------------------------------------------------------
+### 🧩 **Add-ons & Localization**
+* **Plugin Manager:** Easily manage your server plugins (Enable/Disable/Delete).
+* **Multi-language Support:**
+    * 🇺🇸 English
+    * 🇰🇷 Korean
+    * 🇯🇵 Japanese
+    * 🇨🇳 Chinese (Simplified)
 
-🛠️ Tech Stack
-Backend
-Python — Main runtime
+---
 
-Eel — Python ↔ HTML bridge
+## 🛠️ Tech Stack
 
-Frontend
-HTML / CSS / JavaScript — User interface
+* **Backend:** Python (Main logic), Eel (Python ↔ HTML bridge)
+* **Frontend:** HTML, CSS, JavaScript (User Interface)
 
------------------------------------------------------
+---
 
+## 📦 Libraries & Resources
 
-📦 Libraries & Resources
-psutil — CPU/RAM monitoring
+Special thanks to the open-source libraries and services that made this project possible:
 
-requests — API communication & downloads
+### **Backend (Python)**
+* **[Eel](https://github.com/python-eel/Eel):** A little library for making simple Electron-like HTML/JS GUI apps.
+* **[psutil](https://github.com/giampaolo/psutil):** Cross-platform library for retrieving information on running processes and system utilization (CPU/RAM).
+* **[requests](https://requests.readthedocs.io/):** A simple, yet elegant HTTP library for API communication & file downloads.
 
-Pretendard — Main UI font (by Orion Cactus)
+### **Frontend (Web)**
+* **[Pretendard](https://github.com/orioncactus/pretendard):** A multi-platform system UI font that helps the interface look clean and modern (served via jsDelivr).
+* **[Phosphor Icons](https://phosphoricons.com/):** A flexible icon family for interfaces, diagrams, presentations, and more (served via unpkg).
 
-Phosphor Icons — UI icons
+### **APIs & Services**
+* **[PaperMC API](https://papermc.io/):** Used to fetch the latest Minecraft server builds and download the core jar files.
+* **[Minotar API](https://minotar.net/):** Provides the player skin headers (avatars) used in the player management list.
 
-PaperMC API — Paper server core distribution
+> **And a sincere thank you to all other open-source developers whose work helped build this project, even if not explicitly listed here.**
 
------------------------------------------------------
+---
 
-Some features were created with AI.
-If any problems arise from this program, it will be taken down without hesitation.
+## ⚠️ Disclaimer & License
 
------------------------------------------------------
+* **AI Assistance:** Some features and code structures were created with the assistance of AI technology.
+* **Responsibility:** If any critical problems arise from this program, the repository may be taken down without prior notice.
+* **Legal:** This app is in **no way affiliated with Mojang AB or Microsoft Corporation**.
 
-This app is in no way affiliated with Mojang AB or Microsoft Corporation.
-
-❤️ Created with love by JIN
+❤️ **Created with love by JIN**
