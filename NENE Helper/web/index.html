@@ -21,7 +21,8 @@
             --accent-purple: #e040fb;
             --accent-gold: #ffd700;
             --accent-orange: #ff9800;
-            /* 플러그인용 색상 */
+            --accent-cyan: #00bcd4;
+            /* 정보 탭용 */
             --melon: #00e676;
             --text-main: #ffffff;
             --text-sub: #aaaaaa;
@@ -239,10 +240,15 @@
             border-bottom-color: var(--accent-purple);
         }
 
-        /* [추가됨] 플러그인 탭 스타일 */
         .tab.plugins.active {
             color: var(--accent-orange);
             border-bottom-color: var(--accent-orange);
+        }
+
+        /* [추가됨] 정보 탭 스타일 */
+        .tab.info.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
         }
 
         .content {
@@ -736,7 +742,6 @@
             color: white;
         }
 
-        /* [추가됨] 플러그인 아이템 스타일 */
         .plugin-item {
             display: flex;
             justify-content: space-between;
@@ -790,6 +795,7 @@
                 <div class="tab broadcast" onclick="switchTab('broadcast', this)">📢 광고/공지</div>
                 <div class="tab" onclick="switchTab('settings', this)" data-i18n="tab_settings">전체 설정</div>
                 <div class="tab plugins" onclick="switchTab('plugins', this)">🧩 플러그인</div>
+                <div class="tab info" onclick="switchTab('info', this)" data-i18n="tab_info">ℹ️ 서버 정보</div>
                 <div class="tab danger" onclick="switchTab('danger', this)" data-i18n="tab_danger">⛔ 위험 구간</div>
             </div>
 
@@ -859,17 +865,17 @@
                         onclick="sendCommand('gamerule doWeatherCycle false'); showToast('Weather Cycle: OFF')"><i
                             class="ph ph-lock-key"></i><span data-i18n="env_lock">날씨 고정</span></div>
                 </div>
-                <h3 style="color:#ff9800; margin-top:30px;">⚔️ 난이도 제어</h3>
+                <h3 style="color:#ff9800; margin-top:30px;" data-i18n="title_difficulty">⚔️ 난이도 제어</h3>
                 <div class="env-grid">
                     <div class="env-btn"
                         onclick="sendCommand('difficulty peaceful'); showToast('Difficulty: Peaceful')"><i
-                            class="ph ph-smiley"></i><span>평화로움</span></div>
+                            class="ph ph-smiley"></i><span data-i18n="diff_peaceful">평화로움</span></div>
                     <div class="env-btn" onclick="sendCommand('difficulty easy'); showToast('Difficulty: Easy')"><i
-                            class="ph ph-feather"></i><span>쉬움</span></div>
+                            class="ph ph-feather"></i><span data-i18n="diff_easy">쉬움</span></div>
                     <div class="env-btn" onclick="sendCommand('difficulty normal'); showToast('Difficulty: Normal')"><i
-                            class="ph ph-shield"></i><span>보통</span></div>
+                            class="ph ph-shield"></i><span data-i18n="diff_normal">보통</span></div>
                     <div class="env-btn" onclick="sendCommand('difficulty hard'); showToast('Difficulty: Hard')"><i
-                            class="ph ph-skull"></i><span>어려움</span></div>
+                            class="ph ph-skull"></i><span data-i18n="diff_hard">어려움</span></div>
                 </div>
             </div>
 
@@ -882,7 +888,7 @@
                         <button class="btn btn-red" style="padding:8px 15px; font-size:12px;"
                             onclick="openListManager('banlist')" data-i18n="btn_banlist">차단 목록 관리</button>
                         <button class="btn btn-red" style="padding:8px 15px; font-size:12px; background:#8b0000;"
-                            onclick="openListManager('ip-banlist')">IP 차단 관리</button>
+                            onclick="openListManager('ip-banlist')" data-i18n="btn_ip_banlist">IP 차단 관리</button>
                     </div>
                 </div>
                 <div id="playerList" class="player-list">
@@ -892,36 +898,43 @@
             </div>
 
             <div id="broadcast" class="content">
-                <h2 style="color:var(--accent-purple); margin-bottom:20px;">📢 광고 / 공지 보내기</h2>
-                <p style="color:#aaa; font-size:14px; margin-bottom:30px;">서버에 접속한 모든 플레이어에게 메시지를 띄웁니다.</p>
+                <h2 style="color:var(--accent-purple); margin-bottom:20px;" data-i18n="title_broadcast">📢 광고 / 공지 보내기
+                </h2>
+                <p style="color:#aaa; font-size:14px; margin-bottom:30px;" data-i18n="desc_broadcast">서버에 접속한 모든 플레이어에게
+                    메시지를 띄웁니다.</p>
                 <div class="setting-card" style="border-color:var(--accent-purple);">
-                    <h3 style="color:var(--accent-purple);">🖥️ 화면 중앙 타이틀 (Title)</h3>
-                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">가장 크게 보이는 제목입니다.</div>
+                    <h3 style="color:var(--accent-purple);" data-i18n="lbl_bc_title">🖥️ 화면 중앙 타이틀 (Title)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;" data-i18n="desc_bc_title">가장 크게 보이는
+                        제목입니다.</div>
                     <input type="text" id="bcTitleInput" class="input-text full-width"
                         placeholder="예: 환영합니다! / 이벤트 시작!">
                     <div style="display:flex; justify-content:flex-end; gap:10px;">
                         <button class="btn" style="background:#333; border:1px solid #555;"
-                            onclick="sendBroadcast('title_clear')">지우기</button>
-                        <button class="btn btn-purple" onclick="sendBroadcast('title')">보내기 (Send)</button>
+                            onclick="sendBroadcast('title_clear')" data-i18n="btn_bc_clear">지우기</button>
+                        <button class="btn btn-purple" onclick="sendBroadcast('title')" data-i18n="btn_bc_send">보내기
+                            (Send)</button>
                     </div>
                 </div>
                 <div class="setting-card">
-                    <h3>📝 서브 타이틀 (Subtitle)</h3>
-                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">타이틀 아래에 작게 나오는 설명입니다. (타이틀과 함께 보낼 때 사용)
+                    <h3 data-i18n="lbl_bc_subtitle">📝 서브 타이틀 (Subtitle)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;" data-i18n="desc_bc_subtitle">타이틀 아래에 작게
+                        나오는 설명입니다. (타이틀과 함께 보낼 때 사용)
                     </div>
                     <input type="text" id="bcSubtitleInput" class="input-text full-width"
                         placeholder="예: 잠시 후 게임이 시작됩니다.">
                     <div style="display:flex; justify-content:flex-end;">
-                        <button class="btn btn-blue" onclick="sendBroadcast('subtitle')">설정 (Set)</button>
+                        <button class="btn btn-blue" onclick="sendBroadcast('subtitle')" data-i18n="btn_bc_set">설정
+                            (Set)</button>
                     </div>
                 </div>
                 <div class="setting-card">
-                    <h3 style="color:var(--melon);">💬 액션 바 (Actionbar)</h3>
-                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;">아이템 슬롯 위에 작게 뜨는 메시지입니다.</div>
+                    <h3 style="color:var(--melon);" data-i18n="lbl_bc_actionbar">💬 액션 바 (Actionbar)</h3>
+                    <div style="margin-bottom:10px; color:#ddd; font-size:13px;" data-i18n="desc_bc_actionbar">아이템 슬롯 위에
+                        작게 뜨는 메시지입니다.</div>
                     <input type="text" id="bcActionbarInput" class="input-text full-width" placeholder="예: 현재 인원 5/10">
                     <div style="display:flex; justify-content:flex-end;">
                         <button class="btn" style="background:var(--melon); color:#000;"
-                            onclick="sendBroadcast('actionbar')">보내기 (Send)</button>
+                            onclick="sendBroadcast('actionbar')" data-i18n="btn_bc_send">보내기 (Send)</button>
                     </div>
                 </div>
             </div>
@@ -942,15 +955,27 @@
                     <div style="text-align:right; margin-top:10px;"><button class="btn btn-blue"
                             onclick="triggerBackup()" data-i18n="btn_backup_now">지금 백업하기</button></div>
                 </div>
+
                 <div class="setting-card" style="border-color:var(--accent-blue);">
                     <h3 style="color:var(--accent-blue)" data-i18n="title_java">☕ Java 설정</h3>
-                    <div class="setting-row">
-                        <div data-i18n="set_java_path">실행 경로 (java.exe)</div><input type="text" id="java_path"
-                            class="input-text" style="width:350px; text-align:left;" placeholder="java">
+
+                    <div style="margin-bottom:5px; color:#ddd; font-size:13px;">실행 경로 (Path):</div>
+
+                    <div style="display:flex; gap:5px; margin-bottom:10px;">
+                        <input type="text" id="java_path" class="input-text" style="flex:1; text-align:left;"
+                            placeholder="예: C:\Program Files\Java\jdk-17\bin\java.exe">
                     </div>
-                    <p style="font-size:12px; color:#888; margin-top:5px;" data-i18n="msg_java_tip">* 1.18 이상은 Java 17+,
-                        그 이하는 Java 8 권장</p>
+
+                    <button class="btn"
+                        style="width:100%; background:#2b2b2b; border:1px solid #444; display:flex; justify-content:center; align-items:center; gap:8px;"
+                        onclick="openServerJavaManager()">
+                        <i class="ph ph-list"></i> 목록에서 선택 (Select from List)
+                    </button>
+
+                    <p style="font-size:12px; color:#888; margin-top:10px;" data-i18n="msg_java_tip">* 1.18 이상은 Java
+                        17+, 그 이하는 Java 8 권장</p>
                 </div>
+
                 <div class="setting-card">
                     <h3 style="color:var(--melon)" data-i18n="title_general">📝 일반 설정</h3>
                     <div class="setting-row">
@@ -1213,23 +1238,49 @@
                 </div>
                 <p style="color:#888; font-size:13px; margin-top:-10px; margin-bottom:20px;">
                     서버 폴더의 plugins 폴더에 있는 .jar 파일 목록입니다.<br>
-                    플러그인은 항상 서버 재시작 시 적용됩니다.
+                    플러그인 적용 후 서버를 재시작 하십시오.
                 </p>
-
                 <div id="pluginList" class="list-box"
-                    style="height: 100%; background: transparent; border: none; overflow-y: auto;">
+                    style="height: 100%; background: transparent; border: none; overflow-y: auto;"></div>
+            </div>
+
+            <div id="info" class="content">
+                <h2 style="color:var(--accent-cyan); margin-bottom:20px;" data-i18n="title_server_info">ℹ️ 서버 정보</h2>
+                <div class="setting-card" style="border-color:var(--accent-cyan);">
+                    <div class="setting-row">
+                        <span data-i18n="info_created">생성 일자</span>
+                        <span id="infoCreated" style="color:#fff; font-weight:bold;">-</span>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="info_source">다운로드 출처</span>
+                        <span id="infoSource" style="color:#aaa; font-size:13px;">-</span>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="info_size">디스크 사용량</span>
+                        <span id="infoSize" style="color:var(--melon); font-weight:bold;">-</span>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="info_java">Java 버전/경로</span>
+                        <span id="infoJava"
+                            style="color:#ddd; font-size:13px; word-break:break-all; text-align:right; width:60%;">-</span>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="info_players">방문한 플레이어 수</span>
+                        <span id="infoPlayers" style="color:var(--accent-blue); font-weight:bold;">-</span>
+                    </div>
                 </div>
             </div>
 
             <div id="danger" class="content">
                 <div class="setting-card" style="border-color:#888;">
-                    <h3 style="color:#fff;">📂 파일 위치 확인</h3>
-                    <p style="color:#aaa; font-size:13px;">서버 파일이나 백업 파일이 저장된 실제 폴더를 엽니다.</p>
+                    <h3 style="color:#fff;" data-i18n="title_folder_check">📂 파일 위치 확인</h3>
+                    <p style="color:#aaa; font-size:13px;" data-i18n="desc_folder_check">서버 파일이나 백업 파일이 저장된 실제 폴더를 엽니다.
+                    </p>
                     <div style="display:flex; gap:10px; margin-top:15px;">
+                        <button class="btn" style="background:#333; border:1px solid #555;" onclick="openFolder('root')"
+                            data-i18n="btn_open_server_folder">📂 서버 폴더 열기</button>
                         <button class="btn" style="background:#333; border:1px solid #555;"
-                            onclick="openFolder('root')">📂 서버 폴더 열기</button>
-                        <button class="btn" style="background:#333; border:1px solid #555;"
-                            onclick="openFolder('backup')">💾 백업 폴더 열기</button>
+                            onclick="openFolder('backup')" data-i18n="btn_open_backup_folder">💾 백업 폴더 열기</button>
                     </div>
                 </div>
                 <div class="setting-card"
@@ -1250,7 +1301,7 @@
             <p style="color:#ddd; margin-bottom:20px; line-height:1.5;" data-i18n="msg_eula_content">...</p>
             <div class="modal-btn-group"><button class="btn" style="background:#333;" onclick="closeModal('eulaModal')"
                     data-i18n="btn_disagree">거절</button><button class="btn btn-blue"
-                    onclick="closeModal('eulaModal'); openModal('newServerModal')" data-i18n="btn_agree">동의합니다</button>
+                    onclick="closeModal('eulaModal'); prepareNewServerModal()" data-i18n="btn_agree">동의합니다</button>
             </div>
         </div>
     </div>
@@ -1307,9 +1358,10 @@
                 </div>
                 <div class="action-grid">
                     <div class="act-btn" onclick="openWhisperModal()"
-                        style="border-color: var(--accent-blue); color: var(--accent-blue);">💬 귓속말 (Whisper)</div>
+                        style="border-color: var(--accent-blue); color: var(--accent-blue);" data-i18n="btn_whisper">💬
+                        귓속말 (Whisper)</div>
                     <div class="act-btn" onclick="openTpModal()"
-                        style="border-color: var(--melon); color: var(--melon);">🚀 이동 (TP)</div>
+                        style="border-color: var(--melon); color: var(--melon);" data-i18n="btn_tp">🚀 이동 (TP)</div>
                     <div class="act-btn" onclick="openGamemodeModal()"
                         style="grid-column: span 2; border-color: var(--accent-gold); color: var(--accent-gold);">🎮
                         게임모드 변경 (Gamemode)</div>
@@ -1324,22 +1376,22 @@
     </div>
     <div id="whisperModal" class="modal-overlay">
         <div class="modal">
-            <h3>💬 귓속말 보내기</h3>
+            <h3 data-i18n="modal_whisper_title">💬 귓속말 보내기</h3>
             <p style="color:#aaa; font-size:13px; margin-bottom:10px;">To: <b id="whisperTarget" style="color:#fff"></b>
             </p><input type="text" id="whisperInput" class="modal-input" placeholder="메시지 내용을 입력하세요..."
                 style="margin-bottom:20px;">
             <div class="modal-btn-group"><button class="btn" style="background:#333;"
-                    onclick="closeModal('whisperModal')">취소</button><button class="btn btn-blue"
-                    onclick="sendWhisperReal()">보내기</button></div>
+                    onclick="closeModal('whisperModal')" data-i18n="btn_cancel">취소</button><button class="btn btn-blue"
+                    onclick="sendWhisperReal()" data-i18n="btn_bc_send">보내기</button></div>
         </div>
     </div>
     <div id="tpModal" class="modal-overlay">
         <div class="modal" style="width:400px;">
-            <h3 style="color:var(--melon);">🚀 텔레포트 (TP)</h3>
-            <p style="color:#aaa; font-size:13px;">누구에게 이동하시겠습니까?</p>
+            <h3 style="color:var(--melon);" data-i18n="modal_tp_title">🚀 텔레포트 (TP)</h3>
+            <p style="color:#aaa; font-size:13px;" data-i18n="msg_tp_ask">누구에게 이동하시겠습니까?</p>
             <div id="tpList" class="list-box" style="height: 250px;"></div>
-            <div class="modal-btn-group"><button class="btn" style="background:#333;"
-                    onclick="closeModal('tpModal')">닫기</button></div>
+            <div class="modal-btn-group"><button class="btn" style="background:#333;" onclick="closeModal('tpModal')"
+                    data-i18n="btn_close">닫기</button></div>
         </div>
     </div>
     <div id="gamemodeModal" class="modal-overlay">
@@ -1357,21 +1409,21 @@
                 </div>
             </div>
             <div class="modal-btn-group" style="margin-top:20px;"><button class="btn" style="background:#333;"
-                    onclick="closeModal('gamemodeModal')">취소</button></div>
+                    onclick="closeModal('gamemodeModal')" data-i18n="btn_cancel">취소</button></div>
         </div>
     </div>
     <div id="banOptionModal" class="modal-overlay">
         <div class="modal">
-            <h3 style="color:var(--accent-red);">🚫 차단 옵션 선택</h3>
-            <p style="color:#ddd; margin-bottom:20px;">어떤 방식으로 차단하시겠습니까?</p>
+            <h3 style="color:var(--accent-red);" data-i18n="modal_ban_opt_title">🚫 차단 옵션 선택</h3>
+            <p style="color:#ddd; margin-bottom:20px;" data-i18n="msg_ban_opt">어떤 방식으로 차단하시겠습니까?</p>
             <div style="display:flex; flex-direction:column; gap:10px;"><button class="btn"
                     style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
-                    onclick="executeBan('name')">닉네임 차단 (Name Ban)</button><button class="btn"
+                    onclick="executeBan('name')" data-i18n="btn_ban_name">닉네임 차단 (Name Ban)</button><button class="btn"
                     style="background:#333; border:1px solid var(--accent-red); color:var(--accent-red);"
-                    onclick="executeBan('ip')">IP 차단 (IP Ban)</button><button class="btn btn-red"
-                    onclick="executeBan('both')">둘 다 차단 (Both)</button></div>
+                    onclick="executeBan('ip')" data-i18n="btn_ban_ip">IP 차단 (IP Ban)</button><button class="btn btn-red"
+                    onclick="executeBan('both')" data-i18n="btn_ban_both">둘 다 차단 (Both)</button></div>
             <div class="modal-btn-group" style="margin-top:20px;"><button class="btn" style="background:#333;"
-                    onclick="closeModal('banOptionModal')">취소</button></div>
+                    onclick="closeModal('banOptionModal')" data-i18n="btn_cancel">취소</button></div>
         </div>
     </div>
     <div id="actionConfirmModal" class="modal-overlay">
@@ -1388,17 +1440,18 @@
             <h3 style="color:var(--accent-red);">⚠️ 서버 종료 확인</h3>
             <p style="color:#ddd; margin-bottom:20px;">정말 서버를 종료하시겠습니까?</p>
             <div class="modal-btn-group"><button class="btn" style="background:#333;"
-                    onclick="closeModal('stopConfirmModal')">취소</button><button class="btn btn-red"
-                    onclick="executeStop()">종료</button></div>
+                    onclick="closeModal('stopConfirmModal')" data-i18n="btn_cancel">취소</button><button
+                    class="btn btn-red" onclick="executeStop()">종료</button></div>
         </div>
     </div>
     <div id="restartConfirmModal" class="modal-overlay">
         <div class="modal" style="border-color:var(--accent-gold);">
-            <h3 style="color:var(--accent-gold);">🔄 서버 재시작 확인</h3>
-            <p style="color:#ddd; margin-bottom:20px;">정말 서버를 다시 시작하시겠습니까?<br>(종료 후 다시 시작됩니다)</p>
+            <h3 style="color:var(--accent-gold);" data-i18n="modal_restart_title">🔄 서버 재시작 확인</h3>
+            <p style="color:#ddd; margin-bottom:20px;" data-i18n="msg_restart_confirm">정말 서버를 다시 시작하시겠습니까?<br>(종료 후 다시
+                시작됩니다)</p>
             <div class="modal-btn-group"><button class="btn" style="background:#333;"
-                    onclick="closeModal('restartConfirmModal')">취소</button><button class="btn btn-yellow"
-                    onclick="executeRestart()">재시작</button></div>
+                    onclick="closeModal('restartConfirmModal')" data-i18n="btn_cancel">취소</button><button
+                    class="btn btn-yellow" onclick="executeRestart()" data-i18n="btn_restart">재시작</button></div>
         </div>
     </div>
     <div id="pluginDetailModal" class="modal-overlay">
@@ -1407,8 +1460,10 @@
             <p id="plDetailName" style="color:#fff; font-weight:bold; margin-bottom:20px;">Filename</p>
             <p style="color:#aaa; font-size:13px; margin-bottom:20px;">이 플러그인을 서버에서 완전히 삭제하시겠습니까?<br>(복구할 수 없습니다)</p>
             <div class="modal-btn-group">
-                <button class="btn" style="background:#333;" onclick="closeModal('pluginDetailModal')">취소</button>
-                <button class="btn btn-red" onclick="confirmDeletePlugin()">🗑️ 삭제 (Delete)</button>
+                <button class="btn" style="background:#333;" onclick="closeModal('pluginDetailModal')"
+                    data-i18n="btn_cancel">취소</button>
+                <button class="btn btn-red" onclick="confirmDeletePlugin()" data-i18n="btn_delete">🗑️ 삭제
+                    (Delete)</button>
             </div>
         </div>
     </div>
@@ -1427,12 +1482,19 @@
     </div>
     <div id="newServerModal" class="modal-overlay">
         <div class="modal">
-            <h3 data-i18n="modal_new_title">✨ 새 서버 생성</h3><label class="modal-label" data-i18n="modal_new_name">서버
-                이름</label><input type="text" id="newServerName" class="modal-input" placeholder="MyServer"
-                oninput="cleanServerNameInput(this)"><label class="modal-label"
-                data-i18n="modal_new_ver">버전</label><select id="newServerVersion" class="modal-input">
+            <h3 data-i18n="modal_new_title">✨ 새 서버 생성</h3>
+            <label class="modal-label" data-i18n="modal_new_name">서버 이름</label>
+            <input type="text" id="newServerName" class="modal-input" placeholder="MyServer"
+                oninput="cleanServerNameInput(this)">
+            <label class="modal-label" data-i18n="modal_new_ver">버전</label>
+            <select id="newServerVersion" class="modal-input">
                 <option value="">Loading...</option>
             </select>
+            <label class="modal-label" style="margin-top: 10px;">Java 런타임 (Java Runtime)</label>
+            <select id="newServerJava" class="modal-input">
+                <option value="java">Loading...</option>
+            </select>
+
             <div class="modal-btn-group"><button class="btn" style="background:#333;"
                     onclick="closeModal('newServerModal')" data-i18n="btn_cancel">취소</button><button
                     class="btn btn-blue" id="btnCreateReal" onclick="createNewServer()"
@@ -1451,6 +1513,15 @@
                 <option value="ja">日本語 (Japanese)</option>
                 <option value="zh">简体中文 (Simplified Chinese)</option>
             </select>
+
+            <label class="modal-label" style="margin-top:15px;">문제 해결 (Troubleshoot)</label>
+            <button class="btn"
+                style="background: #2b2b2b; border: 1px solid #444; width: 100%; display:flex; justify-content:space-between; align-items:center;"
+                onclick="openModal('javaHelpModal')">
+                <span>🛠️ 자바 강제 종료 도구</span>
+                <i class="ph ph-skull"></i>
+            </button>
+
             <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; text-align: center;"><button
                     class="btn" style="background: #333; width: 100%; border: 1px solid #444; color: #aaa;"
                     onclick="closeModal('launcherSettingsModal'); openModal('creditsModal')">📜 Credits</button></div>
@@ -1470,6 +1541,80 @@
         </div>
     </div>
 
+    <div id="javaManagerModal" class="modal-overlay">
+        <div class="modal" style="width: 500px;">
+            <h3>☕ 설치된 자바 관리</h3>
+            <p style="color:#aaa; font-size:13px; margin-bottom:15px;">
+                아래 목록에서 자바 버전을 선택하세요.<br>
+                <span id="javaManagerContextMsg"></span>
+            </p>
+            <div id="javaListContainer" class="list-box" style="height: 300px;">
+                <div style="text-align:center; padding:20px; color:#666;">Loading...</div>
+            </div>
+            <div style="text-align:right; margin-top:15px;">
+                <button class="btn" style="background:#333;" onclick="closeModal('javaManagerModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="javaApplyConfirmModal" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color:var(--accent-green);">⚠️ 설정 변경 확인</h3>
+            <p style="color:#ddd; margin-bottom:20px;">
+                정말 이 자바 버전으로 기본 설정을 변경하시겠습니까?
+            </p>
+            <div class="modal-btn-group">
+                <button class="btn" style="background:#333;" onclick="closeModal('javaApplyConfirmModal')">취소</button>
+                <button class="btn btn-blue" onclick="executeJavaPathChange()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="javaHelpModal" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color:#fff;">🛠️ 해결 도구 (Troubleshoot)</h3>
+            <p style="color:#aaa; font-size:13px; margin-bottom:20px;">
+                자바 실행과 관련된 문제가 발생했을 때 사용할 수 있는 도구입니다.
+            </p>
+            <button class="btn"
+                style="width:100%; background:rgba(244,67,54,0.1); border:1px solid var(--accent-red); color:var(--accent-red); display:flex; justify-content:center; align-items:center; gap:8px;"
+                onclick="askKillJava()">
+                <i class="ph ph-skull"></i> 자바 강제 종료 (Force Kill Java)
+            </button>
+            <div style="text-align:right; margin-top:20px;">
+                <button class="btn" style="background:#333;" onclick="closeModal('javaHelpModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="killJavaConfirmModal" class="modal-overlay">
+        <div class="modal" style="border-color:var(--accent-red);">
+            <h3 style="color:var(--accent-red);">⚠️ 경고 (Warning)</h3>
+            <p style="color:#ddd; margin-bottom:20px; line-height:1.6;">
+                이 기능을 실행하면 <b>컴퓨터에서 실행 중인 모든 자바(Java) 프로그램이 즉시 종료됩니다.</b><br><br>
+                다른 서버나 마인크래프트 게임이 켜져 있다면 저장되지 않고 꺼질 수 있습니다. 진행하시겠습니까?
+            </p>
+            <div class="modal-btn-group">
+                <button class="btn" style="background:#333;" onclick="closeModal('killJavaConfirmModal')">취소</button>
+                <button class="btn btn-red" onclick="executeKillJava()">확인 (Kill All)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="restartAppModal" class="modal-overlay">
+        <div class="modal" style="border-color: var(--accent-gold);">
+            <h3 style="color:var(--accent-gold);">⚠️ 프로그램 재시작 필요</h3>
+            <p style="color:#ddd; line-height: 1.6;">
+                자바 설정이 변경되었습니다.<br>
+                변경 사항을 완벽하게 적용하기 위해<br>
+                <b>시스템 트레이에서 종료 후 다시 프로그램을 실행하세요.</b>
+            </p>
+            <div class="modal-btn-group">
+                <button class="btn btn-yellow" onclick="closeModal('restartAppModal')">확인</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentSelectedServerName = "", currentLang = "ko", currentTranslations = {}, globalPlayerList = [];
         window.onload = async function () { await eel.init_system_py()(); await checkSystem(); await loadLauncherConfig(); refreshServerList(); loadVersionList(); };
@@ -1481,14 +1626,80 @@
         async function checkSystem() { await eel.check_java_status()(); }
         async function refreshServerList() { let s = await eel.get_server_list_py()(); let l = document.getElementById('sidebarList'); l.innerHTML = ""; s.forEach(i => { const a = (i.name === currentSelectedServerName) ? "active" : ""; l.innerHTML += `<div class="server-item ${a}" onclick="selectServer('${i.name}', this)"><h4>${i.name}</h4><p><span style="color:${i.status === 'Running' ? 'var(--accent-green)' : '#777'}">${i.status}</span><span style="color:#666; margin-left:5px; font-size:11px;">${i.version}</span></p></div>`; }); }
         async function selectServer(n, e) { currentSelectedServerName = n; document.getElementById('logs').innerHTML = ""; document.getElementById('emptyScreen').style.display = 'none'; document.getElementById('mainContent').classList.add('active'); document.querySelectorAll('.server-item').forEach(i => i.classList.remove('active')); if (e) e.classList.add('active'); document.getElementById('headerTitle').innerText = n; await eel.select_server_py(n)(); loadSettings(); }
-        async function createNewServer() { let n = document.getElementById('newServerName').value; let v = document.getElementById('newServerVersion').value; let m = document.getElementById('mirrorUrlInput').value; let b = document.getElementById('btnCreateReal'); if (!n) return showToast("Name required", "error"); b.disabled = true; b.innerText = "..."; let r = await eel.create_new_server_real(n, v, m)(); b.disabled = false; changeLanguage(currentLang); closeModal('newServerModal'); if (r.includes("✅")) { showToast("Success", "success"); refreshServerList(); } else showToast(r, "error"); }
+
+        // [수정됨] 새 서버 생성 시 선택된 자바 경로도 함께 전송
+        async function createNewServer() {
+            let n = document.getElementById('newServerName').value;
+            let v = document.getElementById('newServerVersion').value;
+            let m = document.getElementById('mirrorUrlInput').value;
+            let j = document.getElementById('newServerJava').value;
+
+            let b = document.getElementById('btnCreateReal');
+            if (!n) return showToast("Name required", "error");
+
+            b.disabled = true;
+            b.innerText = "...";
+
+            let r = await eel.create_new_server_real(n, v, m, j)();
+
+            b.disabled = false;
+            changeLanguage(currentLang);
+            closeModal('newServerModal');
+
+            if (r.includes("✅")) {
+                showToast("Success", "success");
+                refreshServerList();
+            } else showToast(r, "error");
+        }
+
+        async function prepareNewServerModal() {
+            openModal('newServerModal');
+            const select = document.getElementById('newServerJava');
+            select.innerHTML = "<option>Scanning...</option>";
+
+            const list = await eel.scan_java_versions_py()();
+            select.innerHTML = "";
+
+            list.forEach(java => {
+                const option = document.createElement('option');
+                option.value = java.path;
+                let label = `Java ${java.version}`;
+                if (java.is_current) label += " (Default)";
+                option.innerText = label;
+                select.appendChild(option);
+            });
+        }
+
         let serverToDelete = "";
         function askDeleteServer() { let n = document.getElementById('headerTitle').innerText; serverToDelete = n; document.getElementById('delTargetName').innerText = n; openModal('deleteConfirmModal'); }
         async function confirmDeleteProcess() { closeModal('deleteConfirmModal'); let r = await eel.delete_server_real(serverToDelete)(); if (r.includes("✅")) { showToast("Deleted", "success"); document.getElementById('emptyScreen').style.display = 'flex'; document.getElementById('mainContent').classList.remove('active'); refreshServerList(); } else { showToast(r, "error"); } }
         const checkboxSettings = ['allow-flight', 'allow-nether', 'broadcast-console-to-ops', 'broadcast-rcon-to-ops', 'debug', 'enable-command-block', 'enable-jmx-monitoring', 'enable-query', 'enable-rcon', 'enable-status', 'enforce-secure-profile', 'enforce-whitelist', 'force-gamemode', 'generate-structures', 'hardcore', 'hide-online-players', 'log-ips', 'online-mode', 'prevent-proxy-connections', 'pvp', 'require-resource-pack', 'spawn-animals', 'spawn-monsters', 'spawn-npcs', 'sync-chunk-writes', 'use-native-transport', 'white-list', 'accepts-transfers', 'auto_backup'];
         const textSettings = ['java_path', 'motd', 'max-players', 'server-port', 'server-ip', 'view-distance', 'simulation-distance', 'max-tick-time', 'network-compression-threshold', 'rate-limit', 'max-world-size', 'level-name', 'level-seed', 'level-type', 'generator-settings', 'gamemode', 'difficulty', 'spawn-protection', 'player-idle-timeout', 'op-permission-level', 'resource-pack', 'rcon.port', 'rcon.password', 'query.port', 'entity-broadcast-range-percentage', 'max-chained-neighbor-updates', 'region-file-compression', 'bug-report-link', 'initial-enabled-packs', 'initial-disabled-packs', 'backup_interval'];
-        async function loadSettings() { let p = await eel.load_properties_py()(); if (!p) return; checkboxSettings.forEach(i => { const e = document.getElementById(i); if (e) e.checked = (p[i] === 'true' || p[i] === true); }); textSettings.forEach(i => { const e = document.getElementById(i); if (e && p[i]) e.value = String(p[i]).replace(/\\:/g, ":"); }); const j = document.getElementById('java_path'); if (p['java_path']) j.value = p['java_path']; else j.value = "java"; }
-        async function saveSettings() { let d = {}; checkboxSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.checked; }); textSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.value; }); await eel.save_properties_py(d)(); showToast("Saved", "success"); }
+
+        async function loadSettings() {
+            let p = await eel.load_properties_py()();
+            if (!p) return;
+
+            checkboxSettings.forEach(i => {
+                const e = document.getElementById(i);
+                if (e) e.checked = (p[i] === 'true' || p[i] === true);
+            });
+
+            textSettings.forEach(i => {
+                const e = document.getElementById(i);
+                if (e && p[i]) e.value = String(p[i]).replace(/\\:/g, ":");
+            });
+
+            // [수정됨] 자바 경로 로드 로직 (display span 제거됨)
+            const j = document.getElementById('java_path');
+            if (p['java_path']) {
+                j.value = p['java_path'];
+            } else {
+                j.value = "java";
+            }
+        }
+
+        async function saveSettings() { let d = {}; checkboxSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.checked; }); textSettings.forEach(i => { const e = document.getElementById(i); if (e) d[i] = e.value; }); await eel.save_properties_py(d)(); showToast("Saved", "success"); loadSettings(); } // loadSettings 추가하여 UI 갱신
         function openModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(() => document.getElementById(id).classList.add('show'), 10); }
         function closeModal(id) { document.getElementById(id).classList.remove('show'); setTimeout(() => document.getElementById(id).style.display = 'none', 300); }
         function updateRamLabel(v) { document.getElementById('ramVal').innerText = v + " GB"; document.getElementById('ramDisplay').innerText = v + " GB"; }
@@ -1517,8 +1728,9 @@
             document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
             document.getElementById(id).classList.add('active'); btn.classList.add('active');
             if (id === 'settings') loadSettings();
-            // [추가됨] 플러그인 탭 누르면 리스트 새로고침
             if (id === 'plugins') refreshPluginList();
+            // [추가됨] 정보 탭 클릭 시 로드
+            if (id === 'info') loadServerInfo();
         }
 
         function sendCommand(c) { eel.send_command_py(c); }
@@ -1574,7 +1786,6 @@
         function askRestart() { openModal('restartConfirmModal'); }
         function executeRestart() { sendCommand('stop'); showToast("Restarting...", "info"); closeModal('restartConfirmModal'); setTimeout(() => startServer(), 5000); }
 
-        // [추가됨] 플러그인 관련 함수들
         async function refreshPluginList() {
             const container = document.getElementById('pluginList');
             container.innerHTML = "...";
@@ -1590,13 +1801,11 @@
                 const div = document.createElement('div');
                 div.className = 'plugin-item';
 
-                // 이름 클릭 시 상세(삭제) 팝업
                 const infoArea = document.createElement('div');
                 infoArea.className = 'plugin-info-area';
                 infoArea.onclick = () => openPluginDetail(p.filename);
                 infoArea.innerHTML = `<i class="ph ph-plug" style="color:var(--accent-orange); font-size:20px;"></i> <span>${p.name}</span>`;
 
-                // 토글 스위치
                 const switchLabel = document.createElement('label');
                 switchLabel.className = 'switch';
                 const input = document.createElement('input');
@@ -1620,10 +1829,10 @@
             const res = await eel.toggle_plugin_py(filename, isChecked)();
             if (res.includes("✅")) {
                 showToast(res, "success");
-                refreshPluginList(); // 리스트 갱신 (이름 바뀜 등 반영)
+                refreshPluginList();
             } else {
                 showToast(res, "error");
-                refreshPluginList(); // 실패 시 원복
+                refreshPluginList();
             }
         }
 
@@ -1640,6 +1849,117 @@
             if (res.includes("✅")) {
                 showToast("Plugin Deleted", "success");
                 refreshPluginList();
+            } else {
+                showToast(res, "error");
+            }
+        }
+
+        // [추가됨] 서버 정보 로드 함수
+        async function loadServerInfo() {
+            const info = await eel.get_server_extended_info_py()();
+            if (info) {
+                document.getElementById('infoCreated').innerText = info.created_at;
+                document.getElementById('infoSource').innerText = info.source_url;
+                document.getElementById('infoSize').innerText = info.disk_usage;
+                document.getElementById('infoJava').innerText = info.java_version;
+                document.getElementById('infoPlayers').innerText = info.player_count + " 명";
+            }
+        }
+
+        // [추가됨] 서버별 자바 관리자 (Settings 탭에서 사용)
+        async function openServerJavaManager() {
+            // 현재 서버의 설정된 자바 경로를 가져옴
+            const currentPath = document.getElementById('java_path').value || "java";
+            openModal('javaManagerModal');
+            document.getElementById('javaManagerContextMsg').innerText = "현재 서버에 적용할 Java 버전을 선택하세요.";
+            loadJavaList(currentPath);
+        }
+
+        // [수정됨] 자바 리스트 로드 (targetPath와 일치하면 '사용 중' 표시)
+        async function loadJavaList(targetPath = "") {
+            const container = document.getElementById('javaListContainer');
+            container.innerHTML = "<div style='text-align:center; padding:20px; color:#666;'>검색 중... (Scanning)</div>";
+
+            // Python에 현재 타겟 경로를 전달하여 리스트를 받아옴
+            const list = await eel.scan_java_versions_py(targetPath)();
+            container.innerHTML = "";
+
+            if (list.length === 0) {
+                container.innerHTML = "<div style='text-align:center; padding:20px; color:#666;'>자바를 찾을 수 없습니다.</div>";
+                return;
+            }
+
+            list.forEach(java => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.style.padding = "15px";
+                item.style.flexDirection = "column";
+                item.style.alignItems = "flex-start";
+                item.style.gap = "5px";
+
+                let statusHtml = "";
+                let btnHtml = "";
+                let bgStyle = "";
+
+                if (java.is_current) {
+                    bgStyle = "background: rgba(43, 166, 64, 0.1); border: 1px solid var(--accent-green);";
+                    statusHtml = `<span style="font-size:11px; color:var(--accent-green); font-weight:bold; margin-bottom:5px;">● 사용 중 (Current Server)</span>`;
+                    btnHtml = `<span style="font-size:12px; color:#666;">현재 설정됨</span>`;
+                } else {
+                    bgStyle = "";
+                    statusHtml = `<span style="font-size:11px; color:#888;">설치됨 (Installed)</span>`;
+                    btnHtml = `<button class="btn btn-blue" style="padding: 5px 12px; font-size:12px;" onclick="applyJavaPath('${java.path.replace(/\\/g, '\\\\')}')">적용하기</button>`;
+                }
+
+                item.style.cssText += bgStyle;
+
+                item.innerHTML = `
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            ${statusHtml}
+                            <div style="font-weight:bold; font-size:15px; color:#fff;">Java ${java.version}</div>
+                            <div style="font-size:12px; color:#aaa; margin-top:3px; word-break:break-all;">${java.path}</div>
+                        </div>
+                        <div style="margin-top: 5px;">
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        let pendingJavaPath = "";
+
+        function applyJavaPath(path) {
+            pendingJavaPath = path;
+            openModal('javaApplyConfirmModal');
+        }
+
+        async function executeJavaPathChange() {
+            closeModal('javaApplyConfirmModal');
+            closeModal('javaManagerModal'); // 리스트 창도 닫음
+            if (!pendingJavaPath) return;
+
+            // 서버별 설정 변경: 단순히 input 값 변경 후 저장 함수 호출
+            const javaInput = document.getElementById('java_path');
+            if (javaInput) {
+                javaInput.value = pendingJavaPath;
+                await saveSettings(); // 설정 저장 및 UI 갱신
+            }
+        }
+
+        // [추가됨] 자바 해결 도구 관련 함수
+        function askKillJava() {
+            closeModal('javaHelpModal');
+            openModal('killJavaConfirmModal');
+        }
+
+        async function executeKillJava() {
+            closeModal('killJavaConfirmModal');
+            const res = await eel.kill_all_java_processes_py()();
+            if (res.includes("✅")) {
+                showToast(res, "success");
             } else {
                 showToast(res, "error");
             }
