@@ -1,4 +1,4 @@
-# NENE HELPER 🐔
+# NENE HELPER / NENE LAUNCHER 🐔
 
 > **The easiest and most lightweight tool to manage your Minecraft Java Edition server.**
 
@@ -8,7 +8,7 @@
 
 ## 🚀 Project Overview
 
-**NENE HELPER** is a powerful tool designed to help anyone set up and manage a Minecraft Java Edition server quickly and easily.
+**NENE HELPER (also known as NENE LAUNCHER)** is a powerful tool designed to help anyone set up and manage a Minecraft Java Edition server quickly and easily.
 It automatically fetches the latest server core through the PaperMC API (or custom API), and provides a user-friendly Web GUI built with Python and HTML/CSS.
 
 No complex commands are needed. Just click, and your server is ready.
