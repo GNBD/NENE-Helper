@@ -1,5 +1,5 @@
 한국어 사용자는 https://github.com/GNBD/NENE-Helper-KO 로 이동하십시오.
-
+-----------------------------------------------------
 🚀 Project Overview
 
 NENE HELPER is a tool designed to help you set up a Minecraft Java Edition server quickly and easily.
