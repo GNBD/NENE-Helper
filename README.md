@@ -3,7 +3,7 @@
 > **A simple and lightweight tool designed to make your Minecraft server management easier.**
 > (It might not be the "world's best," but it's definitely useful!)
 
-한국어 사용자는 [여기(Click)](https://github.com/GNBD/NENE-Helper/blob/main/Kr/README.md)로 이동하십시오.
+한국어 사용자는 [여기(Click)](https://github.com/GNBD/NENE-Helper/blob/main/README%20kr.md)로 이동하십시오.
 
 ---
 
