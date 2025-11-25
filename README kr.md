@@ -7,6 +7,7 @@
 For English Users, please click [here(Click)](https://github.com/GNBD/NENE-Helper).
 
 ---
+다운로드 [Release](https://github.com/GNBD/NENE-Helper/releases/tag/nenehelpe2.00).
 
 ## 🚀 프로젝트 개요 (Project Overview)
 
