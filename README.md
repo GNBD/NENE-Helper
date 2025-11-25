@@ -7,7 +7,7 @@
 
 ---
 
-Download [Release](https://github.com/GNBD/NENE-Helper/releases).
+📩Download [Release](https://github.com/GNBD/NENE-Helper/releases).
 
 ## 🚀 Project Overview
 
