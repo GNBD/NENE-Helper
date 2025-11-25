@@ -7,6 +7,8 @@
 
 ---
 
+Download [Release](https://github.com/GNBD/NENE-Helper/releases).
+
 ## 🚀 Project Overview
 
 **NENE HELPER (also known as NENE LAUNCHER)** is a tool designed to help you set up and manage a Minecraft Java Edition server quickly and easily.
