@@ -46,11 +46,6 @@ It automatically fetches the latest server core through the PaperMC API (or cust
 
 ### 🧩 **Add-ons & Localization**
 * **Plugin Manager:** Easily manage your server plugins (Enable/Disable/Delete).
-* **Multi-language Support:**
-    * EN
-    * 🇰🇷 
-    * 🇯🇵 
-    * 🇨🇳 (Simplified)
 
 ---
 
