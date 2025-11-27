@@ -7,12 +7,12 @@
 
 NeNe EP: https://github.com/GNBD/NeneEP
 
-NENEmanager: https://github.com/GNBD/NENE-Helper/releases/tag/nenemanager
+# NENEmanager
 
 🎉This program is designed to make it easy to update and download servers. We hope you enjoy it! ❤️
 ---
 
-📩Download [Release](https://github.com/GNBD/NENE-Helper/releases).
+📩Download [NENEmanager]([https://github.com/GNBD/NENE-Helper/releases](https://github.com/GNBD/NENE-Helper/releases/tag/nenemanager)).
 
 ## 🚀 Project Overview
 
