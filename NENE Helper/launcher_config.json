@@ -1,5 +1,5 @@
 {
     "language": "ko",
-    "mirror_url": "https://api.purpurmc.org/v2/purpur",
+    "mirror_url": "https://api.papermc.io/v2/projects/paper",
     "global_java": "java"
 }

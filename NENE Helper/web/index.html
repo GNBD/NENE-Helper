@@ -45,6 +45,25 @@
             display: flex;
         }
 
+        /* 스크롤바 스타일 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
         .sidebar {
             width: 240px;
             background: var(--bg-sidebar);
@@ -245,7 +264,6 @@
             border-bottom-color: var(--accent-orange);
         }
 
-        /* [추가됨] 정보 탭 스타일 */
         .tab.info.active {
             color: var(--accent-cyan);
             border-bottom-color: var(--accent-cyan);
@@ -631,6 +649,11 @@
             gap: 20px;
         }
 
+        /* [추가됨] NeneBridge 모달 전용 넓은 스타일 */
+        .nene-modal-style {
+            width: 900px !important;
+        }
+
         .skin-view {
             width: 200px;
             background: #1e1e1e;
@@ -639,6 +662,8 @@
             align-items: center;
             justify-content: center;
             border: 1px solid #333;
+            overflow: hidden;
+            /* 이미지가 넘치지 않게 */
         }
 
         .p-detail-content {
@@ -653,15 +678,42 @@
             justify-content: space-between;
             border-bottom: 1px solid #333;
             padding-bottom: 8px;
+            align-items: flex-start;
+            /* 멀티라인 지원을 위해 */
         }
 
         .p-stat-label {
             color: #888;
             font-size: 13px;
+            width: 120px;
+            /* 라벨 고정 너비 */
+            flex-shrink: 0;
         }
 
         .p-stat-val {
             font-weight: bold;
+            text-align: right;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        /* JSON 내부 키-값 스타일 */
+        .nested-stat {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 13px;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+
+        .nested-key {
+            color: #aaa;
+            margin-right: 8px;
+        }
+
+        .nested-val {
+            color: #fff;
+            font-family: 'Consolas', monospace;
         }
 
         .action-grid {
@@ -1238,7 +1290,7 @@
                 </div>
                 <p style="color:#888; font-size:13px; margin-top:-10px; margin-bottom:20px;">
                     서버 폴더의 plugins 폴더에 있는 .jar 파일 목록입니다.<br>
-                    플러그인 적용 후 서버를 재시작 하십시오.
+                    스위치를 끄면 파일명이 .disabled로 변경되어 서버에서 로드되지 않습니다.
                 </p>
                 <div id="pluginList" class="list-box"
                     style="height: 100%; background: transparent; border: none; overflow-y: auto;"></div>
@@ -1342,10 +1394,7 @@
     <div id="playerDetailModal" class="modal-overlay">
         <div class="modal player-detail-modal">
             <div class="skin-view">
-                <div
-                    style="width:100%; height:100%; background:#333; display:flex; align-items:center; justify-content:center; color:#666;">
-                    <i class="ph ph-user" style="font-size:64px;"></i>
-                </div>
+                <i class="ph ph-user" style="font-size:64px;"></i>
             </div>
             <div class="p-detail-content">
                 <h2 id="pDetailName" style="margin:0;">PlayerName</h2>
@@ -1354,7 +1403,7 @@
                     <div class="p-stat-row"><span class="p-stat-label" data-i18n="modal_p_join">접속 시간</span><span
                             class="p-stat-val" id="pDetailJoin">00:00:00</span></div>
                     <div class="p-stat-row"><span class="p-stat-label" data-i18n="modal_p_status">상태</span><span
-                            class="p-stat-val" style="color:var(--accent-green);">Online</span></div>
+                            class="p-stat-val" id="pDetailStatus" style="color:var(--accent-green);">Online</span></div>
                 </div>
                 <div class="action-grid">
                     <div class="act-btn" onclick="openWhisperModal()"
@@ -1363,8 +1412,12 @@
                     <div class="act-btn" onclick="openTpModal()"
                         style="border-color: var(--melon); color: var(--melon);" data-i18n="btn_tp">🚀 이동 (TP)</div>
                     <div class="act-btn" onclick="openGamemodeModal()"
-                        style="grid-column: span 2; border-color: var(--accent-gold); color: var(--accent-gold);">🎮
+                        style="border-color: var(--accent-gold); color: var(--accent-gold);">🎮
                         게임모드 변경 (Gamemode)</div>
+                    <!-- [수정됨] NeneBridge 정보 버튼 (Plugin 관리 -> Nene Bridge) -->
+                    <div class="act-btn" onclick="openNeneDataModal()"
+                        style="border-color: var(--accent-orange); color: var(--accent-orange);">🧩 Nene Bridge</div>
+
                     <div class="act-btn" onclick="askAction('op', 'OP')" data-i18n="act_op">관리자 (OP)</div>
                     <div class="act-btn" onclick="askAction('deop', 'DEOP')" data-i18n="act_deop">권한 해제 (DEOP)</div>
                     <div class="act-btn danger" onclick="askAction('kick', 'KICK')" data-i18n="act_kick">추방 (KICK)</div>
@@ -1374,6 +1427,28 @@
             </div>
         </div>
     </div>
+
+    <!-- [수정됨] NeneBridge 데이터 모달: JSON 필드 파싱 표시 및 넓은 스타일 적용 -->
+    <div id="neneDataModal" class="modal-overlay">
+        <div class="modal player-detail-modal nene-modal-style">
+            <div class="skin-view">
+                <i class="ph ph-user" style="font-size:64px;"></i>
+            </div>
+            <div class="p-detail-content">
+                <h2 id="neneDetailName" style="margin:0;">PlayerName</h2>
+                <p style="font-size:13px; color:#aaa; margin:0;">NeneBridge User Data</p>
+                <!-- 내용이 들어갈 div (기존 콘솔 스타일 제거, flex로 내용 표시) -->
+                <div id="neneDataContent"
+                    style="flex:1; background:#1e1e1e; border:1px solid #333; border-radius:6px; padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+                    Loading...
+                </div>
+                <!-- 닫기 버튼 수정됨 (전용 닫기 함수 호출) -->
+                <button class="btn" style="background:#333; width:100%; margin-top:10px;" onclick="closeNeneDataModal()"
+                    data-i18n="btn_close">닫기</button>
+            </div>
+        </div>
+    </div>
+
     <div id="whisperModal" class="modal-overlay">
         <div class="modal">
             <h3 data-i18n="modal_whisper_title">💬 귓속말 보내기</h3>
@@ -1617,6 +1692,8 @@
 
     <script>
         let currentSelectedServerName = "", currentLang = "ko", currentTranslations = {}, globalPlayerList = [];
+        let neneDataInterval = null; // [추가됨] NeneBridge 데이터 자동 새로고침용 인터벌 변수
+
         window.onload = async function () { await eel.init_system_py()(); await checkSystem(); await loadLauncherConfig(); refreshServerList(); loadVersionList(); };
         async function tryCloseApp() { const r = await eel.try_close_app_py()(); if (r === "blocked") { showToast(currentTranslations["msg_cannot_close"] || "⚠️ Server is running!", "error"); } else { window.close(); } }
         async function loadLauncherConfig() { const c = await eel.get_launcher_config_py()(); if (c) { if (c.language) await changeLanguage(c.language); if (c.mirror_url) document.getElementById('mirrorUrlInput').value = c.mirror_url; document.getElementById('langSelect').value = currentLang; } }
@@ -1674,7 +1751,7 @@
         function askDeleteServer() { let n = document.getElementById('headerTitle').innerText; serverToDelete = n; document.getElementById('delTargetName').innerText = n; openModal('deleteConfirmModal'); }
         async function confirmDeleteProcess() { closeModal('deleteConfirmModal'); let r = await eel.delete_server_real(serverToDelete)(); if (r.includes("✅")) { showToast("Deleted", "success"); document.getElementById('emptyScreen').style.display = 'flex'; document.getElementById('mainContent').classList.remove('active'); refreshServerList(); } else { showToast(r, "error"); } }
         const checkboxSettings = ['allow-flight', 'allow-nether', 'broadcast-console-to-ops', 'broadcast-rcon-to-ops', 'debug', 'enable-command-block', 'enable-jmx-monitoring', 'enable-query', 'enable-rcon', 'enable-status', 'enforce-secure-profile', 'enforce-whitelist', 'force-gamemode', 'generate-structures', 'hardcore', 'hide-online-players', 'log-ips', 'online-mode', 'prevent-proxy-connections', 'pvp', 'require-resource-pack', 'spawn-animals', 'spawn-monsters', 'spawn-npcs', 'sync-chunk-writes', 'use-native-transport', 'white-list', 'accepts-transfers', 'auto_backup'];
-        const textSettings = ['java_path', 'motd', 'max-players', 'server-port', 'server-ip', 'view-distance', 'simulation-distance', 'max-tick-time', 'network-compression-threshold', 'rate-limit', 'max-world-size', 'level-name', 'level-seed', 'level-type', 'generator-settings', 'gamemode', 'difficulty', 'spawn-protection', 'player-idle-timeout', 'op-permission-level', 'resource-pack', 'rcon.port', 'rcon.password', 'query.port', 'entity-broadcast-range-percentage', 'max-chained-neighbor-updates', 'region-file-compression', 'bug-report-link', 'initial-enabled-packs', 'initial-disabled-packs', 'backup_interval'];
+        const textSettings = ['java_path', 'motd', 'max-players', 'server-port', 'server-ip', 'view-distance', 'simulation-distance', 'max-tick-time', 'network-compression-threshold', 'rate-limit', 'max-world-size', 'level-name', 'level-seed', 'level-type', 'generator-settings', 'gamemode', 'difficulty', 'spawn-protection', 'player-idle-timeout', 'op-permission-level', 'resource-pack', 'rcon.port', 'rcon.password', 'query.port', 'entity-broadcast-range-percentage', 'max-chained-neighbor_updates', 'region-file-compression', 'bug-report-link', 'initial-enabled-packs', 'initial-disabled-packs', 'backup_interval'];
 
         async function loadSettings() {
             let p = await eel.load_properties_py()();
@@ -1737,9 +1814,172 @@
         document.getElementById('cmdInput').addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.target.value.trim() !== "") { sendCommand(e.target.value); e.target.value = ""; } });
         async function triggerBackup() { if (!currentSelectedServerName) return; await eel.trigger_backup_py(currentSelectedServerName)(); showToast("Backup Started", "info"); }
         eel.expose(update_player_list_js);
-        function update_player_list_js(p) { globalPlayerList = p; const l = document.getElementById('playerList'); l.innerHTML = ""; if (document.getElementById('playerCount')) document.getElementById('playerCount').innerText = p.length; if (p.length === 0) { l.innerHTML = `<div class="empty-msg" style="text-align:center;color:#666;">${currentTranslations["msg_no_players"] || "No players."}</div>`; return; } p.forEach(n => { l.innerHTML += `<div class="player-card" onclick="openPlayerDetail('${n}')"><div class="p-info"><div class="avatar" style="background:#444;"></div><div style="font-weight:bold;">${n}</div></div><div style="font-size:12px; color:var(--accent-green);">● Online</div></div>`; }); }
+        // [수정됨] 플레이어 리스트: 온라인/오프라인 구분
+        function update_player_list_js(playerDataList) {
+            // playerDataList = [{name: "...", online: true/false, uuid: "...", join_time: "..."}]
+            globalPlayerList = playerDataList.map(p => p.name);
+            const l = document.getElementById('playerList');
+            l.innerHTML = "";
+
+            // 온라인 플레이어 필터
+            const onlinePlayers = playerDataList.filter(p => p.online);
+            const offlinePlayers = playerDataList.filter(p => !p.online);
+
+            // 숫자 업데이트
+            if (document.getElementById('playerCount')) {
+                document.getElementById('playerCount').innerText = onlinePlayers.length;
+            }
+
+            if (playerDataList.length === 0) {
+                l.innerHTML = `<div class="empty-msg" style="text-align:center;color:#666;">${currentTranslations["msg_no_players"] || "No players."}</div>`;
+                return;
+            }
+
+            // 온라인 플레이어 렌더링
+            onlinePlayers.forEach(p => {
+                const avatarUrl = `https://minotar.net/avatar/${p.name}/40.png`;
+                l.innerHTML += `
+                    <div class="player-card" onclick="openPlayerDetail('${p.name}', true)">
+                        <div class="p-info">
+                            <div class="avatar" style="background-image: url('${avatarUrl}');"></div>
+                            <div style="font-weight:bold;">${p.name}</div>
+                        </div>
+                        <div style="font-size:12px; color:var(--accent-green);">● Online</div>
+                    </div>`;
+            });
+
+            // 오프라인 플레이어 렌더링 (구분선 추가)
+            if (offlinePlayers.length > 0) {
+                if (onlinePlayers.length > 0) {
+                    l.innerHTML += `<div style="grid-column: 1 / -1; margin-top:10px; padding-bottom:5px; border-bottom:1px solid #333; color:#666; font-size:12px;">Offline Players</div>`;
+                }
+                offlinePlayers.forEach(p => {
+                    const avatarUrl = `https://minotar.net/avatar/${p.name}/40.png`;
+                    l.innerHTML += `
+                        <div class="player-card" onclick="openPlayerDetail('${p.name}', false)" style="opacity: 0.6; border-style: dashed;">
+                            <div class="p-info">
+                                <div class="avatar" style="background-image: url('${avatarUrl}'); filter: grayscale(100%);"></div>
+                                <div style="font-weight:bold; color:#aaa;">${p.name}</div>
+                            </div>
+                            <div style="font-size:12px; color:#666;">○ Offline</div>
+                        </div>`;
+                });
+            }
+        }
+
         let currentDetailPlayer = "";
-        async function openPlayerDetail(n) { currentDetailPlayer = n; document.getElementById('pDetailName').innerText = n; document.getElementById('pDetailJoin').innerText = "..."; document.getElementById('pDetailUUID').innerText = "..."; openModal('playerDetailModal'); const i = await eel.get_player_detail_py(n)(); if (i) { document.getElementById('pDetailJoin').innerText = i.join_time; document.getElementById('pDetailUUID').innerText = "UUID: " + i.uuid; } }
+
+        // [수정됨] 상세 정보 오픈 함수 (온라인 여부 인자 추가)
+        async function openPlayerDetail(n, isOnline) {
+            currentDetailPlayer = n;
+            document.getElementById('pDetailName').innerText = n;
+            document.getElementById('pDetailJoin').innerText = "...";
+            document.getElementById('pDetailUUID').innerText = "...";
+
+            const statusEl = document.getElementById('pDetailStatus');
+            if (isOnline) {
+                statusEl.innerText = "Online";
+                statusEl.style.color = "var(--accent-green)";
+            } else {
+                statusEl.innerText = "Offline";
+                statusEl.style.color = "#888";
+            }
+
+            // 스킨 뷰 업데이트
+            const skinView = document.querySelector('.player-detail-modal .skin-view');
+            skinView.innerHTML = `<img src="https://minotar.net/armor/body/${n}/150.png" style="height:180px; width:auto; image-rendering: pixelated; ${!isOnline ? 'filter: grayscale(100%); opacity:0.7;' : ''}">`;
+
+            openModal('playerDetailModal');
+
+            const i = await eel.get_player_detail_py(n)();
+            if (i) {
+                document.getElementById('pDetailJoin').innerText = i.join_time;
+                document.getElementById('pDetailUUID').innerText = "UUID: " + i.uuid;
+            }
+        }
+
+        // [추가됨] NeneBridge 데이터 모달 열기 (자동 새로고침 기능 포함)
+        async function openNeneDataModal() {
+            // 현재 플레이어 상세 팝업 닫기
+            closeModal('playerDetailModal');
+
+            const n = currentDetailPlayer;
+            document.getElementById('neneDetailName').innerText = n;
+            document.getElementById('neneDataContent').innerText = "Loading data...";
+
+            // 스킨 뷰 업데이트 (Nene 모달용)
+            const skinView = document.querySelector('#neneDataModal .skin-view');
+            skinView.innerHTML = `<img src="https://minotar.net/armor/body/${n}/150.png" style="height:180px; width:auto; image-rendering: pixelated;">`;
+
+            openModal('neneDataModal');
+
+            // 초기 데이터 로드
+            await refreshNeneDataUI();
+
+            // 3초마다 데이터 갱신 (자동 새로고침 시작)
+            if (neneDataInterval) clearInterval(neneDataInterval);
+            neneDataInterval = setInterval(refreshNeneDataUI, 3000);
+        }
+
+        // [추가됨] NeneBridge 데이터 새로고침 및 UI 렌더링 함수 (UI 깜빡임 없이 내용만 갱신)
+        async function refreshNeneDataUI() {
+            const n = currentDetailPlayer;
+            // 모달이 닫혀있으면 중단
+            const modal = document.getElementById('neneDataModal');
+            if (modal.style.display === 'none') {
+                if (neneDataInterval) clearInterval(neneDataInterval);
+                return;
+            }
+
+            const data = await eel.get_nene_player_data_py(n)();
+            const contentBox = document.getElementById('neneDataContent');
+
+            if (!contentBox) return;
+
+            if (data) {
+                // JSON을 보기 좋게 파싱하여 표시
+                let html = "";
+
+                // 1. 닉네임 (Nickname) - 최우선 표시
+                if (data.nickname) {
+                    html += `<div class="p-stat-row"><span class="p-stat-label">이름</span><span class="p-stat-val" style="color:var(--accent-blue);">${data.nickname}</span></div>`;
+                }
+
+                // 2. 나머지 데이터 표시 (반복문)
+                for (const [key, value] of Object.entries(data)) {
+                    if (key === 'nickname') continue; // 닉네임은 이미 위에서 표시했으므로 스킵
+
+                    // 값 표시 포맷 (객체나 배열일 경우 JSON 문자열로 변환)
+                    let displayValue = "";
+
+                    if (typeof value === 'object' && value !== null) {
+                        // 객체인 경우 (예: stats, location 등) 줄바꿈해서 키-값으로 표시
+                        for (const [subKey, subValue] of Object.entries(value)) {
+                            displayValue += `<div class="nested-stat"><span class="nested-key">${subKey}:</span> <span class="nested-val">${subValue}</span></div>`;
+                        }
+                    } else {
+                        // 일반 값인 경우
+                        displayValue = value;
+                    }
+
+                    // 키 이름 포맷팅 (첫 글자 대문자 등)
+                    const displayKey = key.charAt(0).toUpperCase() + key.slice(1);
+
+                    html += `<div class="p-stat-row"><span class="p-stat-label">${displayKey}</span><span class="p-stat-val" style="font-size:13px;">${displayValue}</span></div>`;
+                }
+
+                contentBox.innerHTML = html;
+            } else {
+                contentBox.innerHTML = "<div style='text-align:center; color:#666; padding:20px;'>데이터를 찾을 수 없습니다.<br>(Data Not Found)</div>";
+            }
+        }
+
+        // [추가됨] NeneBridge 데이터 모달 닫기 (타이머 정리 포함)
+        function closeNeneDataModal() {
+            if (neneDataInterval) clearInterval(neneDataInterval);
+            closeModal('neneDataModal');
+        }
+
         let pendingAction = null; let pendingTarget = "";
         function askAction(a, d) { pendingAction = a; pendingTarget = currentDetailPlayer; document.getElementById('actionConfirmText').innerHTML = `${currentTranslations.modal_del_msg} <b style="color:white">${pendingTarget}</b><br>Action: <b>${d}</b>`; openModal('actionConfirmModal'); }
         async function confirmAction() { closeModal('actionConfirmModal'); if (!pendingAction || !pendingTarget) return; let c = ""; if (pendingAction === 'op') c = `op ${pendingTarget}`; else if (pendingAction === 'deop') c = `deop ${pendingTarget}`; else if (pendingAction === 'kick') c = `kick ${pendingTarget} Kicked`; else if (pendingAction === 'ban') c = `ban ${pendingTarget} Banned`; if (c) { await eel.execute_command_py(c)(); showToast("Command Sent", "success"); if (pendingAction === 'kick' || pendingAction === 'ban') closeModal('playerDetailModal'); } pendingAction = null; }

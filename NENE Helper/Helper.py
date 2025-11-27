@@ -20,6 +20,7 @@ eel.init('web')
 # 전역 변수
 DEFAULT_JAVA = "java"
 BASE_SERVERS_DIR = "servers"
+BACKUP_ROOT_DIR = "backup"
 LAUNCHER_CONFIG_FILE = "launcher_config.json"
 LANG_DIR = "languages"
 
@@ -76,7 +77,51 @@ DEFAULT_TRANSLATIONS = {
         "modal_restart_title": "🔄 서버 재시작 확인", "msg_restart_confirm": "정말 서버를 다시 시작하시겠습니까?<br>(종료 후 다시 시작됩니다)",
         "title_server_info": "ℹ️ 서버 정보", "info_created": "생성 일자", "info_source": "다운로드 출처", "info_size": "디스크 사용량", "info_java": "Java 버전/경로", "info_players": "방문한 플레이어 수"
     },
-    "en": { "title_launcher": "SERVER<br>LAUNCHER" } 
+    "en": {
+        "title_launcher": "SERVER<br>LAUNCHER", "btn_new_server": "New Server", "msg_select_server": "Select a server",
+        "tab_dashboard": "Dashboard", "tab_env": "Manage Server", "tab_players": "Manage Players", "tab_broadcast": "📢 Broadcast", "tab_settings": "Settings", "tab_info": "ℹ️ Server Info", "tab_danger": "⛔ Danger Zone",
+        "card_player": "Player", "card_status": "Status", "ph_cmd_input": "Enter command...", "btn_start": "Start Server", "btn_stop": "Stop Server", "btn_restart": "Restart",
+        "title_time": "⏰ Time Control", "env_morning": "Morning", "env_noon": "Noon", "env_evening": "Evening", "env_night": "Night",
+        "title_weather": "🌥️ Weather Control", "env_clear": "Clear", "env_rain": "Rain", "env_thunder": "Thunder", "env_lock": "Lock Weather",
+        "title_player_list": "Player List", "btn_whitelist": "Manage Whitelist", "btn_banlist": "Manage Banlist", "btn_ip_banlist": "Manage IP Bans", "msg_no_players": "No players online.",
+        "title_broadcast": "📢 Send Broadcast", "desc_broadcast": "Display a message to all players on the server.",
+        "lbl_bc_title": "🖥️ Title", "desc_bc_title": "Large text in the center of the screen.",
+        "lbl_bc_subtitle": "📝 Subtitle", "desc_bc_subtitle": "Small text under the title.",
+        "lbl_bc_actionbar": "💬 Actionbar", "desc_bc_actionbar": "Small message above the item slots.",
+        "btn_bc_send": "Send", "btn_bc_set": "Set", "btn_bc_clear": "Clear",
+        "btn_save_settings": "💾 Save Settings", "title_backup": "💾 Backup Settings", "set_auto_backup": "Enable Auto Backup", "set_backup_interval": "Backup Interval (min)",
+        "btn_backup_now": "Backup Now", "title_java": "☕ Java Settings", "set_java_path": "Executable Path (java.exe)", "msg_java_tip": "* Java 17+ for 1.18+, Java 8 for older versions",
+        "title_general": "📝 General Settings", "set_motd": "Server Name (MOTD)", "set_server_port": "Server Port", "set_server_ip": "Server IP", "set_max_players": "Max Players",
+        "set_online_mode": "Online Mode", "set_white_list": "Whitelist", "set_enforce_whitelist": "Enforce Whitelist",
+        "title_performance": "🚀 Performance & Network", "set_ram": "RAM Allocation", "set_view_distance": "View Distance", "set_simulation_distance": "Simulation Distance",
+        "set_max_tick_time": "Max Tick Time", "set_network_compression_threshold": "Network Compression Threshold", "set_rate_limit": "Packet Rate Limit",
+        "set_use_native_transport": "Use Native Transport", "set_enable_status": "Enable Status", "set_broadcast_rcon_to_ops": "Broadcast RCON to OPs", "set_broadcast_console_to_ops": "Broadcast Console to OPs",
+        "title_world": "🌍 World Generation", "set_level_name": "Level Name", "set_level_seed": "Level Seed", "set_level_type": "Level Type", "set_generator_settings": "Generator Settings",
+        "set_max_world_size": "Max World Size", "set_allow_nether": "Allow Nether", "set_generate_structures": "Generate Structures",
+        "title_gameplay": "🎮 Gameplay", "set_gamemode": "Default Gamemode", "set_force_gamemode": "Force Gamemode", "set_difficulty": "Difficulty",
+        "set_hardcore": "Hardcore", "set_pvp": "Allow PVP", "set_allow_flight": "Allow Flight", "set_spawn_monsters": "Spawn Monsters", "set_spawn_animals": "Spawn Animals",
+        "set_spawn_npcs": "Spawn NPCs", "set_spawn_protection": "Spawn Protection", "set_enable_command_block": "Enable Command Blocks", "set_player_idle_timeout": "Idle Timeout (min)",
+        "title_security": "🔒 Security & Misc", "set_op_permission_level": "OP Permission Level", "set_log_ips": "Log IPs", "set_enforce_secure_profile": "Enforce Secure Profile",
+        "set_prevent_proxy_connections": "Prevent Proxy Connections", "set_resource_pack": "Resource Pack URL", "set_require_resource_pack": "Require Resource Pack",
+        "set_enable_rcon": "Enable RCON", "set_rcon_port": "RCON Port", "set_rcon_password": "RCON Password", "set_enable_query": "Enable Query", "set_query_port": "Query Port",
+        "set_sync_chunk_writes": "Sync Chunk Writes", "set_enable_jmx_monitoring": "JMX Monitoring", "set_entity_broadcast_range_percentage": "Entity Broadcast Range (%)",
+        "set_max_chained_neighbor_updates": "Max Chained Neighbor Updates", "set_region_file_compression": "Region File Compression", "set_accepts_transfers": "Accept Transfers",
+        "set_bug_report_link": "Bug Report Link", "set_initial_enabled_packs": "Initial Enabled Packs", "set_initial_disabled_packs": "Initial Disabled Packs", "set_debug": "Debug Mode",
+        "title_folder_check": "📂 Check Folder", "desc_folder_check": "Open the actual folder where server or backup files are saved.", "btn_open_server_folder": "📂 Open Server Folder", "btn_open_backup_folder": "💾 Open Backup Folder",
+        "title_danger": "🚫 Delete Server (Danger Zone)", "msg_danger": "Permanently delete the current server. Cannot be undone.", "btn_delete_server": "🗑️ Delete Server",
+        "modal_p_join": "Joined At", "modal_p_status": "Status", "btn_whisper": "💬 Whisper", "btn_tp": "🚀 TP",
+        "act_op": "OP", "act_deop": "DEOP", "act_kick": "KICK", "act_ban": "BAN", "btn_close": "Close",
+        "modal_whisper_title": "💬 Send Whisper", "modal_tp_title": "🚀 텔레포트 (TP)", "msg_tp_ask": "누구에게 이동하시겠습니까?", "msg_tp_empty": "이동할 상대가 없습니다.",
+        "modal_ban_opt_title": "🚫 Ban Options", "msg_ban_opt": "How would you like to ban?", "btn_ban_name": "Name Ban", "btn_ban_ip": "IP Ban", "btn_ban_both": "Both",
+        "btn_cancel": "Cancel", "btn_confirm": "Confirm", "btn_create": "Create", "btn_save": "Save", "btn_delete": "Delete", "btn_add": "Add",
+        "modal_confirm_title": "⚠️ Confirm Execution", "modal_list_title": "Manage List", "ph_nickname": "Enter Nickname / IP",
+        "modal_new_title": "✨ Create New Server", "modal_new_name": "Server Name", "modal_new_ver": "Version", "modal_setting_title": "⚙️ 런처 설정", "modal_setting_lang": "Language", "modal_setting_mirror": "Mirror URL",
+        "modal_del_title": "🚫 Are you sure?", "modal_del_msg": "Selected Server: ", "modal_eula_title": "⚖️ EULA Agreement", "msg_eula_content": "To create a Minecraft server, you must agree to Mojang's EULA.",
+        "btn_agree": "I Agree", "btn_disagree": "Decline", "msg_cannot_close": "⚠️ Server is running! Please stop the server first.",
+        "diff_peaceful": "Peaceful", "diff_easy": "Easy", "diff_normal": "Normal", "diff_hard": "Hard",
+        "modal_restart_title": "🔄 Restart Confirmation", "msg_restart_confirm": "Are you sure you want to restart the server?\n(It will stop and start again)",
+        "title_server_info": "ℹ️ Server Info", "info_created": "Created Date", "info_source": "Download Source", "info_size": "Disk Usage", "info_java": "Java Version/Path", "info_players": "Visited Players"
+    }
 }
 
 # ==========================================================
@@ -85,6 +130,7 @@ DEFAULT_TRANSLATIONS = {
 @eel.expose
 def init_system_py():
     if not os.path.exists(BASE_SERVERS_DIR): os.makedirs(BASE_SERVERS_DIR)
+    if not os.path.exists(BACKUP_ROOT_DIR): os.makedirs(BACKUP_ROOT_DIR)
     if not os.path.exists(LAUNCHER_CONFIG_FILE):
         with open(LAUNCHER_CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump({"language": "ko", "mirror_url": "https://api.papermc.io/v2/projects/paper"}, f, indent=4)
@@ -241,7 +287,6 @@ def execute_command_py(cmd):
     send_command_py(cmd)
     return f"Cmd: {cmd}"
 
-# [수정] 이제 생성 시 자바 경로를 직접 인자로 받습니다.
 @eel.expose
 def create_new_server_real(server_name, version, mirror_url, custom_java_path):
     clean = re.sub(r'[<>:"/\\|?*]', '', server_name).strip()
@@ -285,7 +330,6 @@ def create_new_server_real(server_name, version, mirror_url, custom_java_path):
                     
         with open(os.path.join(target, "eula.txt"), 'w') as f: f.write("eula=true")
         
-        # [수정됨] 선택된 자바 경로(custom_java_path)를 설정 파일에 기록합니다. (버그 수정)
         now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open(os.path.join(target, "nene_config.json"), 'w', encoding='utf-8') as f: 
             json.dump({
@@ -297,7 +341,23 @@ def create_new_server_real(server_name, version, mirror_url, custom_java_path):
                 "created_at": now_str,
                 "download_source": base
             }, f, indent=4)
-            
+        
+        # [추가됨] 1.19 버전 이상일 경우 NeneBridge 플러그인 자동 복사
+        try:
+            ver_parts = version.split('.')
+            if len(ver_parts) >= 2:
+                minor_ver = int(ver_parts[1])
+                if minor_ver >= 19:
+                    # NeneBridge 폴더 안에 있는 jar 파일 확인
+                    plugin_src = os.path.join("NeneBridge", "NeneBridge-1.0-SNAPSHOT.jar")
+                    if os.path.exists(plugin_src):
+                        plugins_dir = os.path.join(target, "plugins")
+                        if not os.path.exists(plugins_dir):
+                            os.makedirs(plugins_dir)
+                        shutil.copy(plugin_src, os.path.join(plugins_dir, "NeneBridge-1.0-SNAPSHOT.jar"))
+        except Exception as e:
+            print(f"NeneBridge Auto Copy Failed: {e}") # 콘솔에만 기록
+
         return "✅ Done"
         
     except Exception as e:
@@ -309,6 +369,9 @@ def delete_server_real(name):
     if name in active_processes: return "⚠️ Running"
     try:
         shutil.rmtree(os.path.join(BASE_SERVERS_DIR, name))
+        # backup_target = os.path.join(BACKUP_ROOT_DIR, name)
+        # if os.path.exists(backup_target): shutil.rmtree(backup_target)
+        
         if name in server_logs: del server_logs[name]
         if name in server_players: del server_players[name]
         return "✅ Deleted"
@@ -323,8 +386,18 @@ def start_server_py(ram):
     jar = os.path.join(BASE_SERVERS_DIR, name, "server.jar")
     if not os.path.exists(jar): return "❌ No Jar"
     if name not in server_logs: server_logs[name] = []
-    server_players[name] = {}
-    if current_view_server == name: eel.update_player_list_js([])()
+    
+    # [수정됨] 서버 시작 시 목록 초기화하지 않고 기존 목록 유지 (오프라인 상태로)
+    if name not in server_players:
+        server_players[name] = {}
+    else:
+        for p in server_players[name]:
+            server_players[name][p]["online"] = False
+
+    # [수정됨] 빈 목록 대신 현재(보존된) 목록을 UI에 전송
+    if current_view_server == name: 
+        update_ui_player_list(name)
+        
     t = threading.Thread(target=run_server, args=(name, jar, ram))
     t.daemon = True
     t.start()
@@ -352,10 +425,18 @@ def run_server(name, jar, ram):
                 parse_player_event(name, clean)
         append_log(name, "[SYSTEM] Stopped")
         if name in active_processes: del active_processes[name]
-        server_players[name] = {}
+        
+        # [수정됨] 서버가 종료되어도 플레이어 목록을 비우지 않고 '오프라인'으로 전환
+        # server_players[name] = {} 
+        if name in server_players:
+            for p_name in server_players[name]:
+                server_players[name][p_name]["online"] = False
+
         if current_view_server == name: 
             eel.update_status_js(False)
-            eel.update_player_list_js([])()
+            # eel.update_player_list_js([])() 
+            update_ui_player_list(name) # 오프라인 목록을 UI에 갱신
+            
     except Exception as e:
         append_log(name, f"[ERROR] {e}")
         if name in active_processes: del active_processes[name]
@@ -367,11 +448,69 @@ def append_log(name, msg):
 
 def update_ui_player_list(server_name):
     if current_view_server == server_name:
-        players = list(server_players.get(server_name, {}).keys())
-        eel.update_player_list_js(players)()
+        # [수정됨] 이름만 보내는게 아니라 객체 리스트를 보냄
+        players_list = []
+        
+        # 1. 메모리에 있는 실시간 접속자 정보
+        if server_name in server_players:
+            for p_name, p_data in server_players[server_name].items():
+                players_list.append({
+                    "name": p_name,
+                    "online": p_data.get("online", False),
+                    "uuid": p_data.get("uuid", "-"),
+                    "join_time": p_data.get("join_time", "-")
+                })
+        
+        # 2. NeneBridge Userdata 파일 스캔하여 오프라인 플레이어 추가
+        try:
+            userdata_dir = os.path.join(BASE_SERVERS_DIR, server_name, "plugins", "NeneBridge", "userdata")
+            if os.path.exists(userdata_dir):
+                for f in os.listdir(userdata_dir):
+                    if f.endswith(".json"):
+                        p_name = f.replace(".json", "")
+                        
+                        # 이미 리스트에 있는지 확인 (실시간 정보 우선)
+                        exists = False
+                        for p in players_list:
+                            if p["name"] == p_name:
+                                exists = True
+                                break
+                        
+                        if not exists:
+                            players_list.append({
+                                "name": p_name,
+                                "online": False,
+                                "uuid": "-", # 파일 내부를 읽어서 가져올 수도 있지만 성능을 위해 일단 -
+                                "join_time": "-"
+                            })
+        except:
+            pass
+
+        eel.update_player_list_js(players_list)()
 
 def parse_player_event(server_name, line):
     if server_name not in server_players: server_players[server_name] = {}
+    
+    # [추가됨] UUID 파싱 로직
+    if "UUID of player" in line:
+        try:
+            # 예: .... UUID of player sungjin_0206 is xxxxx...
+            parts = line.split("UUID of player ")
+            if len(parts) > 1:
+                rest = parts[1].strip()
+                if " is " in rest:
+                    p_name, p_uuid = rest.split(" is ")
+                    p_name = p_name.strip()
+                    p_uuid = p_uuid.strip()
+                    
+                    # 플레이어 정보가 없으면 초기화
+                    if p_name not in server_players[server_name]:
+                        server_players[server_name][p_name] = {"join_time": "-", "uuid": "-", "online": False}
+                    
+                    # UUID 업데이트
+                    server_players[server_name][p_name]["uuid"] = p_uuid
+        except: pass
+
     if "logged in with entity id" in line:
         try:
             parts = line.split(" logged in with entity id")
@@ -380,18 +519,51 @@ def parse_player_event(server_name, line):
             name = re.sub(r'[^a-zA-Z0-9_]', '', name)
             if name:
                 now = datetime.datetime.now().strftime("%H:%M:%S")
-                server_players[server_name][name] = {"join_time": now, "uuid": "-"}
+                
+                # [수정됨] 기존 UUID 유지 (로그인 시 UUID가 덮어씌워지지 않도록)
+                saved_uuid = "-"
+                if name in server_players[server_name]:
+                    saved_uuid = server_players[server_name][name].get("uuid", "-")
+                
+                # [수정됨] Online 상태를 True로 설정
+                server_players[server_name][name] = {"join_time": now, "uuid": saved_uuid, "online": True}
                 update_ui_player_list(server_name)
         except: pass
+    
+    # [수정됨] "lost connection" 감지 시 삭제하지 않고 오프라인 처리
     elif "lost connection" in line:
         try:
             parts = line.split(" lost connection")
             name = parts[0].strip().split(" ")[-1]
             name = re.sub(r'[^a-zA-Z0-9_]', '', name)
             if name in server_players[server_name]:
-                del server_players[server_name][name]
+                # del server_players[server_name][name]  <-- 삭제 금지
+                server_players[server_name][name]["online"] = False
                 update_ui_player_list(server_name)
         except: pass
+
+    # [추가됨] "left the game" 감지 (lost connection이 안 뜨는 경우 대비)
+    elif "left the game" in line:
+        try:
+            parts = line.split(" left the game")
+            name = parts[0].strip().split(" ")[-1]
+            name = re.sub(r'[^a-zA-Z0-9_]', '', name)
+            if name in server_players[server_name]:
+                server_players[server_name][name]["online"] = False
+                update_ui_player_list(server_name)
+        except: pass
+
+@eel.expose
+def get_nene_player_data_py(player_name):
+    if not current_view_server: return None
+    # /plugins/NeneBridge/userdata/playername.json
+    try:
+        path = os.path.join(BASE_SERVERS_DIR, current_view_server, "plugins", "NeneBridge", "userdata", f"{player_name}.json")
+        if os.path.exists(path):
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except: pass
+    return None
 
 @eel.expose
 def load_properties_py():
@@ -472,12 +644,16 @@ def trigger_backup_py(server_name):
 def backup_server(server_name):
     try:
         server_dir = os.path.join(BASE_SERVERS_DIR, server_name)
-        backup_dir = os.path.join(server_dir, "backups")
-        if not os.path.exists(backup_dir): os.makedirs(backup_dir)
+        backup_root = os.path.join(BACKUP_ROOT_DIR, server_name)
+        if not os.path.exists(backup_root):
+            os.makedirs(backup_root)
+            
         ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         zip_name = f"backup_{ts}.zip"
-        zip_path = os.path.join(backup_dir, zip_name)
-        if current_view_server == server_name: eel.add_log_js(f"[SYSTEM] 백업 중: {zip_name}")()
+        zip_path = os.path.join(backup_root, zip_name)
+        
+        if current_view_server == server_name: eel.add_log_js(f"[SYSTEM] 백업 시작: {zip_name}")()
+        
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as z:
             for r, d, f in os.walk(server_dir):
                 if "backups" in d: d.remove("backups")
@@ -485,6 +661,7 @@ def backup_server(server_name):
                     fp = os.path.join(r, file)
                     try: z.write(fp, os.path.relpath(fp, server_dir))
                     except: pass
+                    
         last_backup_times[server_name] = time.time()
         if current_view_server == server_name: eel.add_log_js("[SYSTEM] 백업 완료")()
     except Exception as e:
@@ -493,9 +670,12 @@ def backup_server(server_name):
 @eel.expose
 def open_folder_py(server_name, mode):
     if not server_name: return "❌ No Server Selected"
-    path = os.path.join(BASE_SERVERS_DIR, server_name)
+    
     if mode == "backup":
-        path = os.path.join(path, "backups")
+        path = os.path.join(BACKUP_ROOT_DIR, server_name)
+    else:
+        path = os.path.join(BASE_SERVERS_DIR, server_name)
+        
     if not os.path.exists(path):
         try:
             os.makedirs(path)
@@ -534,16 +714,13 @@ def get_plugin_list_py():
     plugin_list = []
     try:
         for file in os.listdir(plugins_dir):
-            # .jar 파일 (켜짐)
             if file.endswith(".jar"):
                 plugin_list.append({
-                    "name": file,           # 표시 이름
-                    "filename": file,       # 실제 파일명
+                    "name": file,           
+                    "filename": file,       
                     "enabled": True
                 })
-            # .jar.disabled 파일 (꺼짐)
             elif file.endswith(".jar.disabled"):
-                # 표시 이름은 .disabled 떼고 보여줌
                 display_name = file.replace(".jar.disabled", ".jar")
                 plugin_list.append({
                     "name": display_name,
@@ -552,7 +729,6 @@ def get_plugin_list_py():
                 })
     except: pass
     
-    # 이름 순 정렬
     return sorted(plugin_list, key=lambda x: x['name'])
 
 @eel.expose
@@ -565,14 +741,11 @@ def toggle_plugin_py(filename, make_active):
     
     try:
         if make_active:
-            # 현재 .disabled 상태 -> .jar로 변경
-            # 파일명이 ~~~.jar.disabled 라고 가정
             new_name = filename.replace(".jar.disabled", ".jar")
             new_path = os.path.join(plugins_dir, new_name)
             os.rename(old_path, new_path)
             return "✅ Enabled"
         else:
-            # 현재 .jar 상태 -> .disabled로 변경
             new_name = filename + ".disabled"
             new_path = os.path.join(plugins_dir, new_name)
             os.rename(old_path, new_path)
@@ -604,7 +777,6 @@ def get_server_extended_info_py():
     server_path = os.path.join(BASE_SERVERS_DIR, current_view_server)
     config_path = os.path.join(server_path, "nene_config.json")
     
-    # 기본값
     info = {
         "created_at": "Unknown",
         "source_url": "Unknown (Old Server)",
@@ -614,7 +786,6 @@ def get_server_extended_info_py():
         "world_name": "world"
     }
     
-    # 1. Config에서 정보 읽기 (생성일, 출처, 자바경로)
     if os.path.exists(config_path):
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
@@ -624,14 +795,12 @@ def get_server_extended_info_py():
                 info["java_version"] = data.get("java_path", "java")
         except: pass
 
-    # 생성일이 없으면(구버전) 폴더 생성 시간으로 추정
     if info["created_at"] == "Unknown":
         try:
             ctime = os.path.getctime(server_path)
             info["created_at"] = datetime.datetime.fromtimestamp(ctime).strftime("%Y-%m-%d %H:%M:%S")
         except: pass
 
-    # 2. 디스크 사용량 계산
     try:
         total_size = 0
         for dirpath, dirnames, filenames in os.walk(server_path):
@@ -640,7 +809,6 @@ def get_server_extended_info_py():
                 if not os.path.islink(fp):
                     total_size += os.path.getsize(fp)
         
-        # MB 단위 변환
         mb_size = total_size / (1024 * 1024)
         if mb_size > 1024:
             info["disk_usage"] = f"{mb_size/1024:.2f} GB"
@@ -648,8 +816,6 @@ def get_server_extended_info_py():
             info["disk_usage"] = f"{mb_size:.2f} MB"
     except: pass
 
-    # 3. 플레이어 데이터 수 확인 (방문자 수 추정)
-    # server.properties에서 level-name 확인
     try:
         prop_path = os.path.join(server_path, "server.properties")
         if os.path.exists(prop_path):
@@ -663,7 +829,6 @@ def get_server_extended_info_py():
     try:
         playerdata_path = os.path.join(server_path, info["world_name"], "playerdata")
         if os.path.exists(playerdata_path):
-            # .dat 파일 개수 세기
             count = len([name for name in os.listdir(playerdata_path) if name.endswith('.dat')])
             info["player_count"] = count
     except: pass
@@ -674,7 +839,6 @@ def get_server_extended_info_py():
 # [추가 기능] 자바 버전 관리자 (Java Version Manager)
 # ==========================================================
 
-# 전역 변수 업데이트를 위한 함수
 def load_global_java_setting():
     global DEFAULT_JAVA
     try:
@@ -686,10 +850,7 @@ def load_global_java_setting():
 
 @eel.expose
 def scan_java_versions_py(target_path=None):
-    """시스템에서 가능한 자바 경로들을 찾습니다. target_path가 있으면 그것을 현재 설정된 것으로 간주합니다."""
     java_list = []
-    
-    # 1. 현재 설정된 자바 (target_path가 없으면 DEFAULT_JAVA 사용)
     current_path = target_path if target_path else DEFAULT_JAVA
     current_ver = get_java_version_string(current_path)
     
@@ -699,13 +860,11 @@ def scan_java_versions_py(target_path=None):
         "is_current": True
     })
 
-    # 2. 시스템 PATH의 java
     if current_path != "java":
         sys_ver = get_java_version_string("java")
         if sys_ver != "Unknown":
             java_list.append({"path": "java", "version": sys_ver, "is_current": False})
 
-    # 3. 일반적인 설치 경로 검색 (Windows 기준)
     search_paths = [
         r"C:\Program Files\Java",
         r"C:\Program Files (x86)\Java",
@@ -728,7 +887,6 @@ def scan_java_versions_py(target_path=None):
                             "is_current": False
                         })
     
-    # 중복 제거
     unique_list = []
     seen_paths = set()
     for j in java_list:
@@ -740,12 +898,9 @@ def scan_java_versions_py(target_path=None):
 
 def get_java_version_string(path):
     try:
-        # java -version은 stderr로 출력됩니다.
         cmd = [path, "-version"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         output = result.stderr
-        
-        # 버전 문자열 파싱 (ex: "1.8.0_202" or "17.0.1")
         for line in output.split('\n'):
             if "version" in line:
                 return line.split('"')[1]
@@ -755,12 +910,10 @@ def get_java_version_string(path):
 
 @eel.expose
 def set_global_java_py(new_path):
-    # 서버 실행 중인지 확인
     if len(active_processes) > 0:
         return "⚠️ Running"
 
     try:
-        # 설정 파일 로드 및 업데이트
         config = {}
         if os.path.exists(LAUNCHER_CONFIG_FILE):
             with open(LAUNCHER_CONFIG_FILE, 'r', encoding='utf-8') as f:
@@ -781,18 +934,15 @@ def set_global_java_py(new_path):
 def check_any_server_running_py():
     return len(active_processes) > 0
 
-# [추가] 자바 강제 종료 기능
 @eel.expose
 def kill_all_java_processes_py():
     count = 0
     try:
-        # Windows specific force kill for reliability
         if os.name == 'nt':
             os.system("taskkill /f /im java.exe")
             os.system("taskkill /f /im javaw.exe")
             return "✅ 모든 자바 프로세스를 종료 명령을 보냈습니다."
         else:
-            # Linux/Mac via psutil
             for proc in psutil.process_iter(['pid', 'name']):
                 if 'java' in proc.info['name'].lower():
                     proc.kill()
