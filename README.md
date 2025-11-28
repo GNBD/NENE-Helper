@@ -9,7 +9,7 @@ NeNe EP: https://github.com/GNBD/NeneEP
 
 
 
-🎉이 프로그램은 서버를 쉽게 업데이트 하고 다운로드 할수있게 제작되었습니다 많은 사용 바랍니다! ❤️
+🎉이 프로그램은 NeneHelper 를 쉽게 업데이트 하고 다운로드 할수있게 제작되었습니다 많은 사용 바랍니다! ❤️
 ---
 📩Download [(NENEmanager)](https://github.com/GNBD/NENE-Helper/releases/tag/nenemanager)
 
